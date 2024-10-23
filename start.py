@@ -5,7 +5,8 @@ from discord.ext import commands
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix = "$", intents = intents)
-
+token = os.getenv("DISCORD_BOT_TOKEN")
+channel_id = os.getenv("CHANNEL_ID")
 # 當機器人完成啟動時
 @bot.event
 async def on_ready():
@@ -39,7 +40,7 @@ async def load_extensions():
 async def main():
     async with bot:
         await load_extensions()
-        await bot.start("MTI5ODYxMjU2OTQyNjEwNDM4NA.GlpBNo.X2kz024hbwcoOp-hpmc0ZCZvnoVxcxTwYJ4xsI")
+        await bot.start(token)
 
 # 確定執行此py檔才會執行
 if __name__ == "__main__":
