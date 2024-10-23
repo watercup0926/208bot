@@ -2,11 +2,11 @@ import os
 import asyncio
 import discord
 from discord.ext import commands
-
+from dotenv import load_dotenv
+load_dotenv()
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix = "$", intents = intents)
 token = os.getenv("DISCORD_BOT_TOKEN")
-channel_id = os.getenv("CHANNEL_ID")
 # 當機器人完成啟動時
 @bot.event
 async def on_ready():
