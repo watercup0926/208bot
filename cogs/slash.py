@@ -1,16 +1,16 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-
+list = []
 class Slash(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     # Define a slash command
-    @app_commands.command(name="hello", description="Responds with 'Hello, world!'")
-    async def hello(self, interaction: discord.Interaction):
-        """Responds with 'Hello, world!' when invoked by a slash command."""
-        await interaction.response.send_message("Hello, world!")
+    @app_commands.command(name="點餐", description="點餐且列出來所有的項目")
+    async def order(self, interaction: discord.Interaction,name:str):
+        list.append(name)
+        await interaction.response.send_message(list)
 
 # Cog setup function
 async def setup(bot: commands.Bot):
