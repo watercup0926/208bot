@@ -3,45 +3,54 @@ import asyncio
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+
+# Load the .env file and get the bot token
 load_dotenv()
-intents = discord.Intents.all()
-bot = commands.Bot(command_prefix = "$", intents = intents)
 token = os.getenv("DISCORD_BOT_TOKEN")
-# 當機器人完成啟動時
+
+# Set up bot intents and prefix
+intents = discord.Intents.all()
+bot = commands.Bot(command_prefix="$", intents=intents)
+
+# Event: When the bot is ready
 @bot.event
 async def on_ready():
     print(f"目前登入身份 --> {bot.user}")
-    slash = await bot.tree.sync()
+    # Sync the bot's slash commands with Discord
+    await bot.tree.sync()
+    print("Slash commands have been synced.")
 
-# 載入指令程式檔案
+# Command: Load a specific cog
 @bot.command()
 async def load(ctx, extension):
     await bot.load_extension(f"cogs.{extension}")
-    await ctx.send(f"Loaded {extension} done.")
+    await ctx.send(f"Loaded {extension} successfully.")
 
-# 卸載指令檔案
+# Command: Unload a specific cog
 @bot.command()
 async def unload(ctx, extension):
     await bot.unload_extension(f"cogs.{extension}")
-    await ctx.send(f"UnLoaded {extension} done.")
+    await ctx.send(f"Unloaded {extension} successfully.")
 
-# 重新載入程式檔案
+# Command: Reload a specific cog
 @bot.command()
 async def reload(ctx, extension):
     await bot.reload_extension(f"cogs.{extension}")
-    await ctx.send(f"ReLoaded {extension} done.")
+    await ctx.send(f"Reloaded {extension} successfully.")
 
-# 一開始bot開機需載入全部程式檔案
+# Function: Load all extensions (cogs) at startup
 async def load_extensions():
     for filename in os.listdir("./cogs"):
         if filename.endswith(".py"):
             await bot.load_extension(f"cogs.{filename[:-3]}")
+            print(f"Loaded cog: {filename}")
 
+# Function: The main async entry point
 async def main():
     async with bot:
         await load_extensions()
         await bot.start(token)
 
-# 確定執行此py檔才會執行
+# Start the bot
 if __name__ == "__main__":
     asyncio.run(main())
