@@ -4,11 +4,9 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-# 用dotenv載入token
 load_dotenv()
 token = os.getenv("DISCORD_BOT_TOKEN")
 
-# Set up bot intents and prefix
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="$", intents=intents)
 
