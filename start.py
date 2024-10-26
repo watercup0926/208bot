@@ -10,7 +10,7 @@ token = os.getenv("DISCORD_BOT_TOKEN")
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="$", intents=intents)
 
-# Event: When the bot is ready
+# 機器人啟動完成
 @bot.event
 async def on_ready():
     print(f"目前登入身份 --> {bot.user}")
@@ -18,37 +18,37 @@ async def on_ready():
     await bot.tree.sync()
     print("Slash commands have been synced.")
 
-# Command: Load a specific cog
+# 指令：$load
 @bot.command()
 async def load(ctx, extension):
     await bot.load_extension(f"cogs.{extension}")
     await ctx.send(f"Loaded {extension} successfully.")
 
-# Command: Unload a specific cog
+# 指令：$unload
 @bot.command()
 async def unload(ctx, extension):
     await bot.unload_extension(f"cogs.{extension}")
     await ctx.send(f"Unloaded {extension} successfully.")
 
-# Command: Reload a specific cog
+# 指令：$reload
 @bot.command()
 async def reload(ctx, extension):
     await bot.reload_extension(f"cogs.{extension}")
     await ctx.send(f"Reloaded {extension} successfully.")
 
-# Function: Load all extensions (cogs) at startup
+# 開機時載入所有子程式
 async def load_extensions():
     for filename in os.listdir("./cogs"):
         if filename.endswith(".py"):
             await bot.load_extension(f"cogs.{filename[:-3]}")
             print(f"Loaded cog: {filename}")
 
-# Function: The main async entry point
+# 開機程式
 async def main():
     async with bot:
         await load_extensions()
         await bot.start(token)
 
-# Start the bot
+# 啟動機器
 if __name__ == "__main__":
     asyncio.run(main())

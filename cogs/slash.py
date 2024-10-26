@@ -1,7 +1,8 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-
+from typing import Optional
+from discord.app_commands import Choice
 """
 名字
 中杯
@@ -40,7 +41,11 @@ class Slash(commands.Cog):
         self.shop_list=set_shop(店家)
         self.shop_menu=set_menu(店家)
         await interaction.response.send_message("各位，今天喝{}喔{}".format(店家,self.shop_menu))
-
+    @app_commands.command(name="點餐",description='想喝什麼')
+		@app_commands.describe(飲料＝"你要喝什麼")
+		async def order(self, interaction: discord.Interaction,飲料:str):
+			
+			
 # Cog setup function
 async def setup(bot: commands.Bot):
     await bot.add_cog(Slash(bot))
