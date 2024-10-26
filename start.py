@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-# Load the .env file and get the bot token
+# 用dotenv載入token
 load_dotenv()
 token = os.getenv("DISCORD_BOT_TOKEN")
 
