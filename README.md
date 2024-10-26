@@ -1,5 +1,1 @@
-A Bot just for 208 for now\n
-includes:\n
-  order system\n
-future:\n
-  idk\n
+A Bot just for 208 for now. currently working on order system
