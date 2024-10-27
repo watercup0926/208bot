@@ -1,24 +1,30 @@
 import json
 
+file = open("{}.txt".format("叮哥"), "r", encoding="utf-8")
+lines = file.readlines()
+ls = []
+for i in range(1, len(lines), 4):
+    ls.append([lines[i], int(lines[i + 1]), int(lines[i + 2]), list(lines[i + 3])])
 
-def add_item(name):
+
+def add_item(a):
     """Prompt the user to add a new item to the menu."""
-    medium_price = input("Enter medium price (leave empty if not available): ")
-    large_price = input("Enter large price (leave empty if not available): ")
+    medium_price = ls[a][1]
+    large_price = ls[a][2]
     bottle_price = input("Enter bottle price (leave empty if not available): ")
-
+    name = ls[a][0]
     # Convert prices to integers if provided
-    medium_price = int(medium_price) if medium_price else None
-    large_price = int(large_price) if large_price else None
+    medium_price = int(medium_price) if medium_price != 0 else None
+    large_price = int(large_price) if large_price != 0 else None
     bottle_price = int(bottle_price) if bottle_price else None
 
     # Options for the item
-    custom_sugar = input("Can customize sugar level? (yes/no): ").strip().lower() == "y"
-    custom_ice = input("Can customize ice level? (yes/no): ").strip().lower() == "y"
-    hot_available = input("Available hot? (yes/no): ").strip().lower() == "y"
+    custom_sugar = ls[a][3][0].strip().lower() == "0"
+    custom_ice = ls[a][3][2].strip().lower() == "0"
+    hot_available = ls[a][3][1].strip().lower() == "1"
 
     return {
-        "name": name,
+        "name": name.replace("\n", ""),
         "medium_price": medium_price,
         "large_price": large_price,
         "bottle_price": bottle_price,
@@ -30,27 +36,29 @@ def add_item(name):
     }
 
 
-def add_category():
+def add_category(b):
     """Prompt the user to add a new category to the menu."""
     items = []
 
     while True:
-        name = input("enter name")
-        if name != "a":
-            items.append(add_item(name))
+        name = input("yes or no")
+        if name != "n":
+            print(add_item(b))
+            items.append(add_item(b))
+            b += 1
         else:
-            print()
+            print("exit")
             break
-    return items
+    return items, b
 
 
 def main():
     menu = {}
-
+    b = 0
     while True:
         category_name = input("category_name")
         if category_name != "a":
-            items = add_category()
+            items, b = add_category(b)
             menu[category_name] = items
         else:
             break
