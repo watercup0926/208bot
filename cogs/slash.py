@@ -7,7 +7,6 @@ from discord.ext import commands
 中杯
 大杯
 不可調甜度 做熱飲 不可調冰塊
-
 """
 
 
