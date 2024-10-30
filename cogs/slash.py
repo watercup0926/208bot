@@ -11,6 +11,23 @@ def set_menu(shop_name):
         data = json.load(f)
     return data
 
+class DrinkDropdown(discord.ui.Select):
+    def __init__(self, drink_list):
+        # Create options dynamically from the fruit list
+        options = [discord.SelectOption(label="drink", description=f"Choose {fruit}") for fruit in drink_list]
+        
+        # Initialize the dropdown
+        super().__init__(placeholder="Choose a drink...", min_values=1, max_values=1, options=options)
+
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.send_message(f"You selected: {self.values[0]}")
+
+class DropdownView(discord.ui.View):
+    def __init__(self, drink_list):
+        super().__init__()
+        # Add a FruitDropdown instance to the view, populated with fruit_list
+        self.add_item(DrinkDropdown(drink_list))
+
 class Slash(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -40,6 +57,7 @@ class Slash(commands.Cog):
         else:
             await interaction.response.send_message("尚未選擇店家。")
 
+
     # Autocomplete function for dynamic category choices
     @order.autocomplete("分類")
     async def category_autocomplete(self, interaction: discord.Interaction, current: str):
@@ -47,6 +65,12 @@ class Slash(commands.Cog):
             app_commands.Choice(name=category, value=category)
             for category in self.categories if current.lower() in category.lower()
         ]
+
+		@commands.slash_command(name="choose_fruit", description="Choose a fruit from the dropdown")
+   	async def choose_fruit(self, interaction: discord.Interaction):
+        # Send the dropdown view with the dynamically created options
+        await interaction.response.send_message("Please choose a fruit:", view=DropdownView())
+
     
 # Cog setup function
 async def setup(bot: commands.Bot):
