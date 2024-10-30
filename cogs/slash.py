@@ -54,6 +54,7 @@ class Slash(commands.Cog):
     async def order(self, interaction: discord.Interaction, 分類: str):
         if self.shop_name:
             await interaction.response.send_messageZ(f"您選擇了: {分類}")
+            await interaction.response.send_message("Please choose a drink:", view=DropdownView())
         else:
             await interaction.response.send_message("尚未選擇店家。")
 
@@ -65,11 +66,9 @@ class Slash(commands.Cog):
             app_commands.Choice(name=category, value=category)
             for category in self.categories if current.lower() in category.lower()
         ]
+    @commands.command(name="choose_drink", description="Choose a drink from the dropdown")
 
-		@commands.slash_command(name="choose_fruit", description="Choose a fruit from the dropdown")
-   	async def choose_fruit(self, interaction: discord.Interaction):
-        # Send the dropdown view with the dynamically created options
-        await interaction.response.send_message("Please choose a fruit:", view=DropdownView())
+        
 
     
 # Cog setup function
