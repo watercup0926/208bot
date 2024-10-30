@@ -36,7 +36,7 @@ class Slash(commands.Cog):
     @app_commands.describe(分類="你要喝什麼種類的飲料")
     async def order(self, interaction: discord.Interaction, 分類: str):
         if self.shop_name:
-            await interaction.response.send_message(f"您選擇了: {分類}")
+            await interaction.response.send_messageZ(f"您選擇了: {分類}")
         else:
             await interaction.response.send_message("尚未選擇店家。")
 

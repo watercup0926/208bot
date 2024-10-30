@@ -1,0 +1,34 @@
+import discord
+from discord.ext import commands
+
+# Define a view with a dynamic dropdown
+class DrinkDropdown(discord.ui.Select):
+    def __init__(self, drink_list):
+        # Create options dynamically from the fruit list
+        options = [discord.SelectOption(label="drink", description=f"Choose {fruit}") for fruit in drink_list]
+        
+        # Initialize the dropdown
+        super().__init__(placeholder="Choose a drink...", min_values=1, max_values=1, options=options)
+
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.send_message(f"You selected: {self.values[0]}")
+
+class DropdownView(discord.ui.View):
+    def __init__(self, drink_list):
+        super().__init__()
+        # Add a FruitDropdown instance to the view, populated with fruit_list
+        self.add_item(DrinkDropdown(drink_list))
+
+class DropdownBot(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.slash_command(name="choose_fruit", description="Choose a fruit from the dropdown")
+    async def choose_fruit(self, interaction: discord.Interaction):
+        # Send the dropdown view with the dynamically created options
+        await interaction.response.send_message("Please choose a fruit:", view=DropdownView())
+
+# Bot setup
+bot = commands.Bot(command_prefix="!")
+bot.add_cog(DropdownBot(bot))
+bot.run("YOUR_BOT_TOKEN")
