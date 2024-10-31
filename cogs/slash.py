@@ -12,6 +12,13 @@ def set_menu(shop_name):
     return data
 
 
+# Function to read shop JSON data
+def set_shop():
+    with open("shops.json", "r", encoding="UTF-8") as f:
+        data = json.load(f)
+    return data
+
+
 # Dropdown menu for selecting a drink
 class DrinkDropdown(discord.ui.Select):
     def __init__(self, drink_list):
@@ -41,6 +48,8 @@ class Slash(commands.Cog):
         self.shop_name = ""
         self.shop_menu = {}
         self.categories = []
+        self.shops = set_shop()
+        self.shop_names = list(self.shops.keys())
 
     @app_commands.command(name="菜單", description="給出今天的菜單")
     async def menu(self, interaction: discord.Interaction):
@@ -52,11 +61,21 @@ class Slash(commands.Cog):
             await interaction.response.send_message("還沒決定哪間", ephemeral=True)
 
     @app_commands.command(name="今日店家", description="今天要喝哪家呢?")
+    @app_commands.describe(店家="選擇今天的店家")
     async def store(self, interaction: discord.Interaction, 店家: str):
         self.shop_name = 店家
         self.shop_menu = set_menu(店家)
         self.categories = list(self.shop_menu.keys())
         await interaction.response.send_message(f"各位，今天喝{店家}喔")
+
+    # Autocomplete for selecting a shop in the `store` command
+    @store.autocomplete("店家")
+    async def shop_autocomplete(self, interaction: discord.Interaction, current: str):
+        return [
+            app_commands.Choice(name=shop, value=shop)
+            for shop in self.shop_names
+            if current.lower() in shop.lower()
+        ]
 
     @app_commands.command(name="點餐", description="想喝什麼")
     @app_commands.describe(分類="你要喝什麼種類的飲料")
@@ -77,7 +96,7 @@ class Slash(commands.Cog):
         else:
             await interaction.followup.send("該分類不存在，請重新選擇。")
 
-    # Autocomplete function for dynamic category choices
+    # Autocomplete function for dynamic category choices in `order`
     @order.autocomplete("分類")
     async def category_autocomplete(
         self, interaction: discord.Interaction, current: str
