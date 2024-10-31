@@ -55,7 +55,7 @@ class Slash(commands.Cog):
     async def menu(self, interaction: discord.Interaction):
         if self.shop_name:
             await interaction.response.send_message(
-                content=str(self.shop_menu), ephemeral=True
+                self.shops[self.shop_name]["menu_url"], ephemeral=True
             )
         else:
             await interaction.response.send_message("還沒決定哪間", ephemeral=True)
@@ -66,7 +66,9 @@ class Slash(commands.Cog):
         self.shop_name = 店家
         self.shop_menu = set_menu(店家)
         self.categories = list(self.shop_menu.keys())
-        await interaction.response.send_message(f"各位，今天喝{店家}喔")
+        await interaction.response.send_message(
+            f"各位，今天喝{店家}喔", self.shops[店家]["menu_url"]
+        )
 
     # Autocomplete for selecting a shop in the `store` command
     @store.autocomplete("店家")
