@@ -5,37 +5,36 @@ from discord import app_commands
 from discord.ext import commands
 
 
-# Function to read JSON menu data
+# 讀取菜單
 def set_menu(shop_name):
     with open(f"{shop_name}_menu.json", "r", encoding="UTF-8") as f:
         data = json.load(f)
     return data
 
 
-# Function to read shop JSON data
+# 讀取shop_json的資料
 def set_shop():
     with open("shops.json", "r", encoding="UTF-8") as f:
         data = json.load(f)
     return data
 
 
-# Dropdown menu for selecting a drink
+# 飲料選單
 class DrinkDropdown(discord.ui.Select):
     def __init__(self, drink_list):
-        # Create options dynamically from the drink_list
+        # 從drink list裡面自動上選項
         options = [discord.SelectOption(label=drink) for drink in drink_list]
         super().__init__(
-            placeholder="Choose a drink...", min_values=1, max_values=1, options=options
+            placeholder="選杯飲料", min_values=1, max_values=1, options=options
         )
 
     async def callback(self, interaction: discord.Interaction):
-        # Respond with the user's choice
+        # 把點的餐回送給使用者
         await interaction.response.send_message(
             f"You selected: {self.values[0]}", ephemeral=True
         )
 
 
-# View containing the dropdown menu
 class DropdownView(discord.ui.View):
     def __init__(self, drink_list):
         super().__init__()
@@ -93,7 +92,7 @@ class Slash(commands.Cog):
         if 分類 in self.shop_menu:
             drink_names = [drink["name"] for drink in self.shop_menu[分類]]
             await interaction.followup.send(
-                "Please choose a drink:", view=DropdownView(drink_names)
+                "請選擇你要的飲料:", view=DropdownView(drink_names)
             )
         else:
             await interaction.followup.send("該分類不存在，請重新選擇。")
