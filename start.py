@@ -1,5 +1,6 @@
 import asyncio
 import os
+import sys
 
 import discord
 from discord.ext import commands
@@ -7,7 +8,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 token = os.getenv("DISCORD_BOT_TOKEN")
-
+admin = os.getenv("ADMIN_ROLE_NAME")
+channel_id = int(os.getenv("CHANNEL_ID"))
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="$", intents=intents)
 
@@ -19,10 +21,14 @@ async def on_ready():
     # Sync the bot's slash commands with Discord
     await bot.tree.sync()
     print("Slash commands have been synced.")
+    channel = bot.get_channel(channel_id)
+    if channel:
+        await channel.send("Bot is up and ready!")
 
 
 # 指令：$load
 @bot.command()
+@commands.has_role(admin)
 async def load(ctx, extension):
     await bot.load_extension(f"cogs.{extension}")
     await ctx.send(f"Loaded {extension} successfully.")
@@ -30,6 +36,7 @@ async def load(ctx, extension):
 
 # 指令：$unload
 @bot.command()
+@commands.has_role(admin)
 async def unload(ctx, extension):
     await bot.unload_extension(f"cogs.{extension}")
     await ctx.send(f"Unloaded {extension} successfully.")
@@ -37,9 +44,19 @@ async def unload(ctx, extension):
 
 # 指令：$reload
 @bot.command()
+@commands.has_role(admin)
 async def reload(ctx, extension):
     await bot.reload_extension(f"cogs.{extension}")
     await ctx.send(f"Reloaded {extension} successfully.")
+
+
+# 指令: restart
+@bot.command(name="restart")
+@commands.has_role(admin)
+async def restart(ctx):
+    await ctx.send("Restarting the bot...")
+    # Restart the bot program
+    os.execv(sys.executable, ["python"] + sys.argv)
 
 
 # 開機時載入所有子程式
