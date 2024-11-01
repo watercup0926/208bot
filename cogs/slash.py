@@ -33,13 +33,24 @@ class DrinkDropdown(discord.ui.Select):
         await interaction.response.send_message(
             f"You selected: {self.values[0]}", ephemeral=True
         )
+				
 
+class SugarDropdown(discord.ui.Select):
+		def __init__(self, sugar_level):
+				options = [discord.SelectOption(label=sugar) for sugar in sugar_level]
+				super().__init__(
+						placeholder="甜度",min_value=1, max_value=1,options=options
+				)
+		async def callback(self, interaction: discord.Interaction):
 
 class DropdownView(discord.ui.View):
     def __init__(self, drink_list):
         super().__init__()
         self.add_item(DrinkDropdown(drink_list))
 
+class CustomView(discord.ui.View):
+		def __init__(self, sugar_level, ice_level):
+				self.add_item(SugarDropdown(sugar_level))
 
 class Slash(commands.Cog):
     def __init__(self, bot: commands.Bot):
