@@ -5,13 +5,13 @@ def add_item(name):
     """Prompt the user to add a new item to the menu."""
     medium_price = input("Enter medium price (leave empty if not available): ")
     large_price = input("Enter large price (leave empty if not available): ")
-    bottle_price = input("Enter bottle price (leave empty if not available): ")
+    #bottle_price = input("Enter bottle price (leave empty if not available): ")
 
     # Convert prices to integers if provided
     medium_price = int(medium_price) if medium_price else None
     large_price = int(large_price) if large_price else None
-    bottle_price = int(bottle_price) if bottle_price else None
-
+    #bottle_price = int(bottle_price) if bottle_price else None
+    bottle_price = None;
     # Options for the item
     custom_sugar = input("Can customize sugar level? (yes/no): ").strip().lower() == "y"
     custom_ice = input("Can customize ice level? (yes/no): ").strip().lower() == "y"
@@ -35,7 +35,7 @@ def add_category():
     items = []
 
     while True:
-        name = input("enter name")
+        name = input("enter name: ")
         if name != "a":
             items.append(add_item(name))
         else:
@@ -48,7 +48,7 @@ def main():
     menu = {}
 
     while True:
-        category_name = input("category_name")
+        category_name = input("category_name: ")
         if category_name != "a":
             items = add_category()
             menu[category_name] = items
