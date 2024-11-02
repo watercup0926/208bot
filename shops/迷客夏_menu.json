@@ -1,0 +1,520 @@
+{
+    "愛茶的牛": [
+        {
+            "name": "娜杯紅茶",
+            "medium_price": null,
+            "large_price": 40,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "伯爵/大正紅茶",
+            "medium_price": null,
+            "large_price": 35,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "原片初露青茶",
+            "medium_price": null,
+            "large_price": 35,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "茉莉原淬綠茶",
+            "medium_price": null,
+            "large_price": 35,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "琥珀高峰烏龍",
+            "medium_price": null,
+            "large_price": 35,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "水之森玄米抹茶",
+            "medium_price": null,
+            "large_price": 45,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        }
+    ],
+    "牧場鮮奶茶": [
+        {
+            "name": "娜杯紅茶拿鐵",
+            "medium_price": 55,
+            "large_price": 65,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "伯爵紅茶拿鐵",
+            "medium_price": 50,
+            "large_price": 60,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "大正紅茶拿鐵",
+            "medium_price": 50,
+            "large_price": 60,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "琥珀烏龍拿鐵",
+            "medium_price": 50,
+            "large_price": 60,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "茉香綠茶拿鐵",
+            "medium_price": 50,
+            "large_price": 60,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "原片青茶拿鐵",
+            "medium_price": 50,
+            "large_price": 60,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "珍珠紅茶拿鐵(伯爵/大正)",
+            "medium_price": 60,
+            "large_price": 70,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "珍珠娜杯紅茶拿鐵",
+            "medium_price": 65,
+            "large_price": 75,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        }
+    ],
+    "無咖啡因": [
+        {
+            "name": "輕纖喬麥茶",
+            "medium_price": null,
+            "large_price": 40,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "輕纖蕎麥拿鐵",
+            "medium_price": 60,
+            "large_price": 70,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "冰糖洛神梅",
+            "medium_price": null,
+            "large_price": 45,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "原鄉冬瓜茶",
+            "medium_price": null,
+            "large_price": 35,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "焙香決明大麥",
+            "medium_price": null,
+            "large_price": 30,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "焙香大麥拿鐵",
+            "medium_price": 50,
+            "large_price": 60,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        }
+    ],
+    "綠光牧場鮮奶": [
+        {
+            "name": "芋頭鮮奶",
+            "medium_price": 70,
+            "large_price": 90,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "手炒黑糖鮮奶",
+            "medium_price": 65,
+            "large_price": 85,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "法芙娜可可鮮奶",
+            "medium_price": 65,
+            "large_price": 85,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "玄米抹茶鮮奶",
+            "medium_price": 65,
+            "large_price": 85,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "珍珠鮮奶",
+            "medium_price": 70,
+            "large_price": 90,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "嫩仙草凍奶",
+            "medium_price": 65,
+            "large_price": 85,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "綠光純鮮奶家庭號",
+            "medium_price": null,
+            "large_price": 169,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        }
+    ],
+    "手作特調": [
+        {
+            "name": "熟釀青梅綠",
+            "medium_price": null,
+            "large_price": 55,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        },
+        {
+            "name": "熟釀青梅檸",
+            "medium_price": null,
+            "large_price": 55,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        },
+        {
+            "name": "蜜桃烏龍",
+            "medium_price": null,
+            "large_price": 65,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        },
+        {
+            "name": "蜜桃茉莉",
+            "medium_price": null,
+            "large_price": 65,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": false,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        },
+        {
+            "name": "白甘蔗青茶",
+            "medium_price": null,
+            "large_price": 70,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "冬瓜青茶",
+            "medium_price": null,
+            "large_price": 50,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "冬瓜檸檬/麥茶",
+            "medium_price": null,
+            "large_price": 50,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "柳丁綠茶/青茶",
+            "medium_price": null,
+            "large_price": 65,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        },
+        {
+            "name": "青檸香茶",
+            "medium_price": null,
+            "large_price": 65,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        },
+        {
+            "name": "蜂蜜檸檬晶凍",
+            "medium_price": null,
+            "large_price": 55,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        },
+        {
+            "name": "檸檬蜜Q晶凍",
+            "medium_price": null,
+            "large_price": 70,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        },
+        {
+            "name": "香柚綠茶",
+            "medium_price": null,
+            "large_price": 55,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        },
+        {
+            "name": "柚蜜白玉",
+            "medium_price": null,
+            "large_price": 65,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        },
+        {
+            "name": "養樂多綠",
+            "medium_price": null,
+            "large_price": 50,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        },
+        {
+            "name": "冰萃柳丁/檸檬",
+            "medium_price": null,
+            "large_price": 60,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        }
+    ],
+    "KUMO雲奶霜": [
+        {
+            "name": "蕎蕎奶霜紅(伯爵/大正/娜杯)",
+            "medium_price": null,
+            "large_price": 65,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        },
+        {
+            "name": "蕎蕎奶霜綠/烏/青/麥",
+            "medium_price": null,
+            "large_price": 65,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        },
+        {
+            "name": "蕎蕎奶霜蜜桃茉莉",
+            "medium_price": null,
+            "large_price": 80,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        },
+        {
+            "name": "蕎蕎奶霜蜂蜜青海",
+            "medium_price": null,
+            "large_price": 80,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        }
+    ]
+}
