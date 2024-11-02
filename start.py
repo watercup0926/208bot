@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 token = os.getenv("DISCORD_BOT_TOKEN")
 admin = os.getenv("ADMIN_ROLE_NAME")
-channel_id = os.getenv("CHANNEL_ID")
+channel_id = int(os.getenv("CHANNEL_ID"))
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
 
