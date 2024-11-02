@@ -4,13 +4,19 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+# 定義全域變數
+ice_level = []
+sugar_level = []
 
 # 讀取菜單
 def set_menu(shop_name):
     with open(f"{shop_name}_menu.json", "r", encoding="UTF-8") as f:
         data = json.load(f)
     return data
-
+def set_ice(shop_name):
+    with open(f"{shop_name}_menu.json", "r", encoding="UTF-8") as f:
+        data = json.load(f)
+    return
 
 # 讀取shop_json的資料
 def set_shop():
@@ -25,13 +31,13 @@ class DrinkDropdown(discord.ui.Select):
         # 從drink list裡面自動上選項
         options = [discord.SelectOption(label=drink) for drink in drink_list]
         super().__init__(
-            placeholder="選杯飲料", min_values=1, max_values=1, options=options
+            placeholder="選擇飲料", min_values=1, max_values=1, options=options
         )
 
     async def callback(self, interaction: discord.Interaction):
         # 把點的餐回送給使用者
         await interaction.response.send_message(
-            f"You selected: {self.values[0]}", ephemeral=True
+            f"你選擇了: {self.values[0]}，請選擇甜度和冰塊", ephemeral=True
         )
                 
 class IceDropdown(discord.ui.Select):
@@ -44,17 +50,21 @@ class IceDropdown(discord.ui.Select):
 
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.send_message(
-            f"You selected: {self.values[0]}", ephemeral=True
+            f"你選擇了: {self.values[0]}，甜度冰塊", ephemeral=True
         )
 
+
 class SugarDropdown(discord.ui.Select):
-		def __init__(self, sugar_level):
-				options = [discord.SelectOption(label=sugar) for sugar in sugar_level]
-				super().__init__(
-						placeholder="甜度",min_value=1, max_value=1,options=options
-				)
-		async def callback(self, interaction: discord.Interaction):
-                  print()
+    def __init__(self, sugar_level):
+        options = [discord.SelectOption(label=sugar) for sugar in sugar_level]
+        super().__init__(
+            placeholder="甜度", min_values=1, max_values=1, options=options
+        )
+
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.send_message(
+            f"你選擇了: {self.values[0]}，請選擇冰塊", ephemeral=True
+        )
 
 class DropdownView(discord.ui.View):
     def __init__(self, drink_list):
@@ -62,9 +72,10 @@ class DropdownView(discord.ui.View):
         self.add_item(DrinkDropdown(drink_list))
 
 class CustomView(discord.ui.View):
-		def __init__(self, ice_level,sugar_level):
-                  self.add_item(IceDropdown(ice_level))
-                  self.add_item(SugarDropdown(sugar_level))
+    def __init__(self, ice_level, sugar_level):
+        super().__init__()
+        self.add_item(IceDropdown(ice_level))
+        self.add_item(SugarDropdown(sugar_level))
 
 class Slash(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -78,22 +89,26 @@ class Slash(commands.Cog):
     @app_commands.command(name="菜單", description="給出今天的菜單")
     async def menu(self, interaction: discord.Interaction):
         if self.shop_name:
-            await interaction.response.send_message(
-                self.shops[self.shop_name]["menu_url"], ephemeral=True
-            )
+            url = self.shops[self.shop_name]["menu_url"]
+            embed = discord.Embed(title=f"{self.shop_name} 的菜單")
+            embed.set_image(url=url)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
         else:
             await interaction.response.send_message("還沒決定哪間", ephemeral=True)
 
     @app_commands.command(name="今日店家", description="今天要喝哪家呢?")
     @app_commands.describe(店家="選擇今天的店家")
     async def store(self, interaction: discord.Interaction, 店家: str):
+        global ice_level, sugar_level
         self.shop_name = 店家
         self.shop_menu = set_menu(店家)
         self.categories = list(self.shop_menu.keys())
+        ice_level = self.shops[店家]["ice_level"]
+        sugar_level = self.shops[店家]["sugar_level"]
         url = self.shops[店家]["menu_url"]
-        await interaction.response.send_message(
-            f"各位，今天喝{店家}喔{url}",
-        )
+        embed = discord.Embed(title=f"各位，今天喝{店家}喔")
+        embed.set_image(url=url)
+        await interaction.response.send_message(embed=embed)
 
     # Autocomplete for selecting a shop in the `store` command
     @store.autocomplete("店家")
@@ -105,7 +120,7 @@ class Slash(commands.Cog):
         ]
 
     @app_commands.command(name="點餐", description="想喝什麼")
-    @app_commands.describe(分類="你要喝什麼種類的飲料")
+    @app_commands.describe(分類="選擇飲料分類")
     async def order(self, interaction: discord.Interaction, 分類: str):
         if not self.shop_name:
             await interaction.response.send_message("尚未選擇店家。", ephemeral=True)
@@ -119,6 +134,9 @@ class Slash(commands.Cog):
             drink_names = [drink["name"] for drink in self.shop_menu[分類]]
             await interaction.followup.send(
                 "請選擇你要的飲料:", view=DropdownView(drink_names)
+            )
+            await interaction.followup.send(
+                "請選擇甜度和冰塊:", view=CustomView(ice_level, sugar_level)
             )
         else:
             await interaction.followup.send("該分類不存在，請重新選擇。")
