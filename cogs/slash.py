@@ -10,11 +10,11 @@ sugar_level = []
 
 # 讀取菜單
 def set_menu(shop_name):
-    with open(f"{shop_name}_menu.json", "r", encoding="UTF-8") as f:
+    with open(f"shops/{shop_name}_menu.json", "r", encoding="UTF-8") as f:
         data = json.load(f)
     return data
 def set_ice(shop_name):
-    with open(f"{shop_name}_menu.json", "r", encoding="UTF-8") as f:
+    with open(f"shops/{shop_name}_menu.json", "r", encoding="UTF-8") as f:
         data = json.load(f)
     return
 
