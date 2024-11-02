@@ -1,6 +1,5 @@
 import json
 
-
 def add_item(name):
     """Prompt the user to add a new item to the menu."""
     #medium_price = input("Enter medium price (leave empty if not available): ")
@@ -48,7 +47,7 @@ def add_category():
 
 def main():
     menu = {}
-
+    shop_name = input("drink shop name: ")
     while True:
         category_name = input("category_name: ")
         if category_name != "a":
@@ -57,11 +56,11 @@ def main():
         else:
             break
     # Save menu to JSON file
-    with open("menu.json", "w", encoding="utf-8") as file:
+    with open(f"shops/{shop_name}_menu.json", "w", encoding="utf-8") as file:
         json.dump(menu, file, ensure_ascii=False, indent=4)
 
-    print("Menu saved to menu.json!")
-
+    print(f"Menu saved to {shop_name}_menu.json!")
+    print("folder: shops")
 
 if __name__ == "__main__":
     main()

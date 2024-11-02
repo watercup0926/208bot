@@ -1,5 +1,4 @@
 import json
-
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -16,7 +15,7 @@ def set_menu(shop_name):
 def set_ice(shop_name):
     with open(f"shops/{shop_name}_menu.json", "r", encoding="UTF-8") as f:
         data = json.load(f)
-    return
+    return data
 
 # 讀取shop_json的資料
 def set_shop():
