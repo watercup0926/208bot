@@ -35,15 +35,31 @@ class DrinkDropdown(discord.ui.Select):
         )
 
     async def callback(self, interaction: discord.Interaction):
-        # 把點的餐回送給使用者
-        await interaction.response.send_message(
-            f"你選擇了: {self.values[0]}，請選擇甜度和冰塊", ephemeral=True
+        selected_drink = self.values[0]
+        drink_options = next(
+            (drink["options"] for category in interaction.client.shop_menu.values() for drink in category if drink["name"] == selected_drink), 
+            None
         )
+        if drink_options:
+            custom_view = CustomView(
+                ice_level if drink_options["custom_ice"] else [],
+                sugar_level if drink_options["custom_sugar"] else [],
+                drink_options["hot_available"]
+            )
+            await interaction.response.send_message(
+                f"你選擇了: {selected_drink}，請選擇甜度和冰塊", view=custom_view, ephemeral=True
+            )
+        else:
+            await interaction.response.send_message(
+                f"找不到飲料選項: {selected_drink}", ephemeral=True
+            )
                 
 class IceDropdown(discord.ui.Select):
-    def __init__(self, ice_level):
+    def __init__(self, ice_level, hot_available):
         # 從ice level裡面自動上選項
         options = [discord.SelectOption(label=ice) for ice in ice_level]
+        if hot_available:
+            options.append(discord.SelectOption(label="熱飲"))
         super().__init__(
             placeholder="冰塊", min_values=1, max_values=1, options=options
         )
@@ -72,10 +88,12 @@ class DropdownView(discord.ui.View):
         self.add_item(DrinkDropdown(drink_list))
 
 class CustomView(discord.ui.View):
-    def __init__(self, ice_level, sugar_level):
+    def __init__(self, ice_level, sugar_level, hot_available):
         super().__init__()
-        self.add_item(IceDropdown(ice_level))
-        self.add_item(SugarDropdown(sugar_level))
+        if ice_level:
+            self.add_item(IceDropdown(ice_level, hot_available))
+        if sugar_level:
+            self.add_item(SugarDropdown(sugar_level))
 
 class Slash(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -134,9 +152,6 @@ class Slash(commands.Cog):
             drink_names = [drink["name"] for drink in self.shop_menu[分類]]
             await interaction.followup.send(
                 "請選擇你要的飲料:", view=DropdownView(drink_names)
-            )
-            await interaction.followup.send(
-                "請選擇甜度和冰塊:", view=CustomView(ice_level, sugar_level)
             )
         else:
             await interaction.followup.send("該分類不存在，請重新選擇。")

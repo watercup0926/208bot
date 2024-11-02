@@ -10,7 +10,7 @@ load_dotenv()
 token = os.getenv("DISCORD_BOT_TOKEN")
 admin = os.getenv("ADMIN_ROLE_NAME")
 channel_id = int(os.getenv("CHANNEL_ID"))
-intents = discord.Intents.default()
+intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 
