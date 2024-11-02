@@ -1,0 +1,458 @@
+{
+    "原味茶": [
+        {
+            "name": "高山金萱茶",
+            "medium_price": null,
+            "large_price": 30,
+            "bottle_price": 45,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "翡翠綠茶",
+            "medium_price": null,
+            "large_price": 30,
+            "bottle_price": 45,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "錫蘭紅茶",
+            "medium_price": null,
+            "large_price": 30,
+            "bottle_price": 45,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "文山青茶",
+            "medium_price": null,
+            "large_price": 30,
+            "bottle_price": 45,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "古早味紅茶",
+            "medium_price": null,
+            "large_price": 30,
+            "bottle_price": 45,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "蜜桃紅茶",
+            "medium_price": null,
+            "large_price": 40,
+            "bottle_price": 55,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "金萱雙Q",
+            "medium_price": null,
+            "large_price": 40,
+            "bottle_price": 55,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        }
+    ],
+    "鮮果茶飲": [
+        {
+            "name": "百香雙Q果",
+            "medium_price": null,
+            "large_price": 60,
+            "bottle_price": 80,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        },
+        {
+            "name": "百香綠茶",
+            "medium_price": null,
+            "large_price": 55,
+            "bottle_price": 75,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        },
+        {
+            "name": "百香多多",
+            "medium_price": null,
+            "large_price": 60,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        },
+        {
+            "name": "翡翠柳橙",
+            "medium_price": null,
+            "large_price": 60,
+            "bottle_price": 90,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        },
+        {
+            "name": "冰萃檸檬",
+            "medium_price": null,
+            "large_price": 55,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "蜂蜜檸檬",
+            "medium_price": null,
+            "large_price": 65,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        }
+    ],
+    "濃醇系列": [
+        {
+            "name": "蜜桃奶茶",
+            "medium_price": null,
+            "large_price": 60,
+            "bottle_price": 85,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "錫蘭奶茶",
+            "medium_price": null,
+            "large_price": 50,
+            "bottle_price": 75,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "鐵觀音奶茶",
+            "medium_price": null,
+            "large_price": 50,
+            "bottle_price": 75,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "波霸奶茶(椰果/波波/綠茶凍)",
+            "medium_price": null,
+            "large_price": 50,
+            "bottle_price": 75,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "仙草凍奶茶",
+            "medium_price": null,
+            "large_price": 50,
+            "bottle_price": 75,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "玫瑰奶茶(產品略含甜度)",
+            "medium_price": null,
+            "large_price": 60,
+            "bottle_price": 85,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "阿華田",
+            "medium_price": null,
+            "large_price": 60,
+            "bottle_price": 85,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        }
+    ],
+    "果粒茶系列": [
+        {
+            "name": "香橙果粒茶",
+            "medium_price": null,
+            "large_price": 75,
+            "bottle_price": 105,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        },
+        {
+            "name": "柳橙果粒茶",
+            "medium_price": null,
+            "large_price": 70,
+            "bottle_price": 100,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        },
+        {
+            "name": "葡萄柚果粒茶",
+            "medium_price": null,
+            "large_price": 75,
+            "bottle_price": 105,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        },
+        {
+            "name": "葡萄柚果粒蜜茶",
+            "medium_price": null,
+            "large_price": 70,
+            "bottle_price": 100,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        }
+    ],
+    "芝芝系列": [
+        {
+            "name": "芝芝金萱/錫蘭紅茶",
+            "medium_price": null,
+            "large_price": 50,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "芝芝金萱雙Q",
+            "medium_price": null,
+            "large_price": 60,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "芝芝蜜桃紅茶",
+            "medium_price": null,
+            "large_price": 60,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "芝芝翡翠綠茶",
+            "medium_price": null,
+            "large_price": 50,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "芝芝錫蘭紅茶",
+            "medium_price": null,
+            "large_price": 70,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "芝芝阿華田",
+            "medium_price": null,
+            "large_price": 80,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        }
+    ],
+    "經典特調": [
+        {
+            "name": "梅子冰茶",
+            "medium_price": null,
+            "large_price": 35,
+            "bottle_price": 50,
+            "options": {
+                "custom_sugar": false,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "梅子綠茶",
+            "medium_price": null,
+            "large_price": 50,
+            "bottle_price": null,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "多多綠茶",
+            "medium_price": null,
+            "large_price": 50,
+            "bottle_price": 80,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": false
+            }
+        }
+    ],
+    "寶石系列(無咖啡因)": [
+        {
+            "name": "蕎麥綠寶石",
+            "medium_price": null,
+            "large_price": 40,
+            "bottle_price": 55,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        }
+    ],
+    "鮮奶系列": [
+        {
+            "name": "紅茶拿鐵",
+            "medium_price": null,
+            "large_price": 65,
+            "bottle_price": 95,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "鐵觀音拿鐵",
+            "medium_price": null,
+            "large_price": 65,
+            "bottle_price": 95,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "波霸紅茶拿鐵",
+            "medium_price": null,
+            "large_price": 65,
+            "bottle_price": 95,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "仙草凍紅茶拿鐵",
+            "medium_price": null,
+            "large_price": 65,
+            "bottle_price": 95,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "阿華田拿鐵",
+            "medium_price": null,
+            "large_price": 65,
+            "bottle_price": 95,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        },
+        {
+            "name": "玫瑰紅茶拿鐵(產品略含甜度)",
+            "medium_price": null,
+            "large_price": 70,
+            "bottle_price": 100,
+            "options": {
+                "custom_sugar": true,
+                "custom_ice": true,
+                "hot_available": true
+            }
+        }
+    ]
+}
