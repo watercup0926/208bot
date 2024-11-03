@@ -8,15 +8,13 @@ from discord.ext import commands
 ice_level = []
 sugar_level = []
 
+
 # 讀取菜單
 def set_menu(shop_name):
-    with open(f"{shop_name}_menu.json", "r", encoding="UTF-8") as f:
+    with open(f"shops/{shop_name}_menu.json", "r", encoding="UTF-8") as f:
         data = json.load(f)
     return data
-def set_ice(shop_name):
-    with open(f"{shop_name}_menu.json", "r", encoding="UTF-8") as f:
-        data = json.load(f)
-    return
+
 
 # 讀取shop_json的資料
 def set_shop():
@@ -28,32 +26,47 @@ def set_shop():
 # 飲料選單
 class DrinkDropdown(discord.ui.Select):
     def __init__(self, drink_list):
-        # 從drink list裡面自動上選項
-        options = [discord.SelectOption(label=drink) for drink in drink_list]
-        super().__init__(
-            placeholder="選擇飲料", min_values=1, max_values=1, options=options
-        )
+        try:
+            if not drink_list:
+                options = [discord.SelectOption(label="無可用飲料")]
+            else:
+                options = [
+                    discord.SelectOption(label=drink, value=drink)
+                    for drink in drink_list
+                ]
+            super().__init__(
+                placeholder="選擇飲料", min_values=1, max_values=1, options=options
+            )
+        except Exception as e:
+            print(f"DrinkDropdown 初始化錯誤: {e}")
+            super().__init__(
+                placeholder="選單載入失敗", options=[discord.SelectOption(label="錯誤")]
+            )
 
     async def callback(self, interaction: discord.Interaction):
-        selected_drink = self.values[0]
-        drink_options = next(
-            (drink["options"] for category in interaction.client.shop_menu.values() for drink in category if drink["name"] == selected_drink), 
-            None
-        )
-        if drink_options:
-            custom_view = CustomView(
-                ice_level if drink_options["custom_ice"] else [],
-                sugar_level if drink_options["custom_sugar"] else [],
-                drink_options["hot_available"]
-            )
+        try:
+            # 獲取 Cog 實例
+            cog = interaction.client.get_cog("Slash")
+
+            # 獲取當前店家的冰塊和甜度選項
+            ice_options = cog.shops[cog.shop_name]["ice_level"]
+            sugar_options = cog.shops[cog.shop_name]["sugar_level"]
+            hot_available = cog.shops[cog.shop_name].get("hot_available", False)
+
+            # 創建自訂視窗
+            custom_view = CustomView(ice_options, sugar_options, hot_available)
+
+            # 發送選項
             await interaction.response.send_message(
-                f"你選擇了: {selected_drink}，請選擇甜度和冰塊", view=custom_view, ephemeral=True
+                f"你選擇了: {self.values[0]}\n請選擇甜度和冰塊：",
+                view=custom_view,
+                ephemeral=True,
             )
-        else:
-            await interaction.response.send_message(
-                f"找不到飲料選項: {selected_drink}", ephemeral=True
-            )
-                
+        except Exception as e:
+            print(f"Callback 錯誤: {e}")
+            await interaction.response.send_message("選擇處理發生錯誤", ephemeral=True)
+
+
 class IceDropdown(discord.ui.Select):
     def __init__(self, ice_level, hot_available):
         # 從ice level裡面自動上選項
@@ -82,10 +95,12 @@ class SugarDropdown(discord.ui.Select):
             f"你選擇了: {self.values[0]}，請選擇冰塊", ephemeral=True
         )
 
+
 class DropdownView(discord.ui.View):
     def __init__(self, drink_list):
         super().__init__()
         self.add_item(DrinkDropdown(drink_list))
+
 
 class CustomView(discord.ui.View):
     def __init__(self, ice_level, sugar_level, hot_available):
@@ -94,6 +109,7 @@ class CustomView(discord.ui.View):
             self.add_item(IceDropdown(ice_level, hot_available))
         if sugar_level:
             self.add_item(SugarDropdown(sugar_level))
+
 
 class Slash(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -121,6 +137,7 @@ class Slash(commands.Cog):
         self.shop_name = 店家
         self.shop_menu = set_menu(店家)
         self.categories = list(self.shop_menu.keys())
+        print(self.categories)
         ice_level = self.shops[店家]["ice_level"]
         sugar_level = self.shops[店家]["sugar_level"]
         url = self.shops[店家]["menu_url"]
@@ -161,6 +178,8 @@ class Slash(commands.Cog):
     async def category_autocomplete(
         self, interaction: discord.Interaction, current: str
     ):
+        if not self.categories:
+            return []
         return [
             app_commands.Choice(name=category, value=category)
             for category in self.categories
