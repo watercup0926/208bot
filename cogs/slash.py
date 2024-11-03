@@ -79,7 +79,7 @@ class IceDropdown(discord.ui.Select):
 
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.send_message(
-            f"你選擇了: {self.values[0]}，甜度冰塊", ephemeral=True
+            f"你選擇了: {self.values[0]}", ephemeral=True
         )
 
 
@@ -92,7 +92,7 @@ class SugarDropdown(discord.ui.Select):
 
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.send_message(
-            f"你選擇了: {self.values[0]}，請選擇冰塊", ephemeral=True
+            f"你選擇了: {self.values[0]}", ephemeral=True
         )
 
 
