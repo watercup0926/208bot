@@ -9,6 +9,16 @@ ice_level = []
 sugar_level = []
 
 
+def get_drink_hot_available(menu_data: dict, drink_name: str) -> bool:
+    # 遍歷所有分類
+    for category in menu_data.values():
+        # 在每個分類中尋找指定飲料
+        for drink in category:
+            if drink["name"] == drink_name:
+                return drink["options"]["hot_available"]
+    return False
+
+
 # 讀取菜單
 def set_menu(shop_name):
     with open(f"shops/{shop_name}_menu.json", "r", encoding="UTF-8") as f:
@@ -51,7 +61,7 @@ class DrinkDropdown(discord.ui.Select):
             # 獲取當前店家的冰塊和甜度選項
             ice_options = cog.shops[cog.shop_name]["ice_level"]
             sugar_options = cog.shops[cog.shop_name]["sugar_level"]
-            hot_available = cog.shops[cog.shop_name].get("hot_available", False)
+            hot_available = get_drink_hot_available(cog.shop_menu, self.values[0])
 
             # 創建自訂視窗
             custom_view = CustomView(ice_options, sugar_options, hot_available)
