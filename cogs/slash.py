@@ -18,6 +18,11 @@ def get_drink_hot_available(menu_data: dict, drink_name: str) -> bool:
                 return drink["options"]["hot_available"]
     return False
 
+def get_drink_size(menu_data: dict, drink_name: str) ->bool:
+		for catefory in menu_data.values():
+				for drink in category:
+						if drink["name"] == drink_name:
+								return drink["medium_price"],drink["large_price"],drink["bottle_price"]
 
 # 讀取菜單
 def set_menu(shop_name):
