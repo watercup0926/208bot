@@ -258,46 +258,6 @@ class Slash(commands.Cog):
             if current.lower() in category.lower()
         ]
 
-    @app_commands.command(name="冰塊", description="請問要加冰嗎?")
-    async def ice(self, interaction: discord.Interaction):
-        user_id = interaction.user.id
-        if user_id not in self.user_data:
-            self.user_data[user_id] = {}
-        await interaction.response.send_message("請問要加冰嗎? (是/否)", ephemeral=True)
-
-    @app_commands.command(name="糖分", description="請問要加糖嗎?")
-    async def sugar(self, interaction: discord.Interaction, ice_choice: str):
-        user_id = interaction.user.id
-        self.user_data[user_id]['ice'] = ice_choice
-        await interaction.response.send_message("請問要加糖嗎? (是/否)", ephemeral=True)
-
-    @app_commands.command(name="尺寸", description="請問要什麼尺寸?")
-    async def size(self, interaction: discord.Interaction, sugar_choice: str):
-        user_id = interaction.user.id
-        self.user_data[user_id]['sugar'] = sugar_choice
-        if self.shop_name:
-            drink_name = self.user_data[user_id].get('drink_name')
-            sizes = self.get_drink_sizes(self.shop_name, drink_name)
-            sizes_str = ", ".join(sizes)
-            await interaction.response.send_message(f"請問要什麼尺寸? ({sizes_str})", ephemeral=True)
-        else:
-            await interaction.response.send_message("還沒決定哪間", ephemeral=True)
-
-    @commands.command(name="customize")
-    async def customize(self, ctx, shop_name, drink_name):
-        user_id = ctx.author.id
-        if user_id not in self.user_data:
-            self.user_data[user_id] = {
-                'drink_name': drink_name,
-                'ice': None,
-                'sugar': None,
-                'size': None
-            }
-        sizes_and_prices = self.get_drink_sizes_and_prices(shop_name, drink_name)
-        view = CustomView(self, ice_level=True, sugar_level=True, hot_available=True, sizes_and_prices=sizes_and_prices)
-        await ctx.send("Customize your drink:", view=view)
-
-
 # Cog setup function
 async def setup(bot: commands.Bot):
     await bot.add_cog(Slash(bot))
