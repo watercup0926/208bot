@@ -18,12 +18,6 @@ def get_drink_hot_available(menu_data: dict, drink_name: str) -> bool:
                 return drink["options"]["hot_available"]
     return False
 
-def get_drink_size(menu_data: dict, drink_name: str) ->bool:
-		for catefory in menu_data.values():
-				for drink in category:
-						if drink["name"] == drink_name:
-								return drink["medium_price"],drink["large_price"],drink["bottle_price"]
-
 # 讀取菜單
 def set_menu(shop_name):
     with open(f"shops/{shop_name}_menu.json", "r", encoding="UTF-8") as f:
@@ -73,7 +67,7 @@ class DrinkDropdown(discord.ui.Select):
 
             # 發送選項
             await interaction.response.send_message(
-                f"你選擇了: {self.values[0]}\n請選擇甜度和冰塊：",
+                f"你選擇���: {self.values[0]}\n請選擇甜度和冰塊：",
                 view=custom_view,
                 ephemeral=True,
             )
@@ -134,6 +128,22 @@ class Slash(commands.Cog):
         self.categories = []
         self.shops = set_shop()
         self.shop_names = list(self.shops.keys())
+        self.user_data = {}
+
+    def get_drink_sizes(self, shop_name, drink_name):
+        menu_data = set_menu(shop_name)
+        for category in menu_data.values():
+            for drink in category:
+                if drink["name"] == drink_name:
+                    sizes = []
+                    if drink["medium_price"] is not None:
+                        sizes.append("medium")
+                    if drink["large_price"] is not None:
+                        sizes.append("large")
+                    if drink["bottle_price"] is not None:
+                        sizes.append("bottle")
+                    return sizes
+        return
 
     @app_commands.command(name="菜單", description="給出今天的菜單")
     async def menu(self, interaction: discord.Interaction):
@@ -200,6 +210,31 @@ class Slash(commands.Cog):
             for category in self.categories
             if current.lower() in category.lower()
         ]
+
+    @app_commands.command(name="冰塊", description="請問要加冰嗎?")
+    async def ice(self, interaction: discord.Interaction):
+        user_id = interaction.user.id
+        if user_id not in self.user_data:
+            self.user_data[user_id] = {}
+        await interaction.response.send_message("請問要加冰嗎? (是/否)", ephemeral=True)
+
+    @app_commands.command(name="糖分", description="請問要加糖嗎?")
+    async def sugar(self, interaction: discord.Interaction, ice_choice: str):
+        user_id = interaction.user.id
+        self.user_data[user_id]['ice'] = ice_choice
+        await interaction.response.send_message("請問要加糖嗎? (是/否)", ephemeral=True)
+
+    @app_commands.command(name="尺寸", description="請問要什麼尺寸?")
+    async def size(self, interaction: discord.Interaction, sugar_choice: str):
+        user_id = interaction.user.id
+        self.user_data[user_id]['sugar'] = sugar_choice
+        if self.shop_name:
+            drink_name = self.user_data[user_id].get('drink_name')
+            sizes = self.get_drink_sizes(self.shop_name, drink_name)
+            sizes_str = ", ".join(sizes)
+            await interaction.response.send_message(f"請問要什麼尺寸? ({sizes_str})", ephemeral=True)
+        else:
+            await interaction.response.send_message("還沒決定哪間", ephemeral=True)
 
 
 # Cog setup function
