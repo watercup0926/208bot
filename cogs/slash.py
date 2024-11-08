@@ -8,14 +8,28 @@ from discord.ext import commands
 ice_level = []
 sugar_level = []
 
+def get_drink_sizes_and_prices(shop_name, drink_name):
+    menu_data = set_menu(shop_name)
+    for category in menu_data.values():
+            for drink in category:
+                if drink["name"] == drink_name:
+                    sizes_and_prices = {}
+                if drink["medium_price"] is not None:
+                    sizes_and_prices["medium"] = drink["medium_price"]
+                if drink["large_price"] is not None:
+                    sizes_and_prices["large"] = drink["large_price"]
+                if drink["bottle_price"] is not None:
+                    sizes_and_prices["bottle"] = drink["bottle_price"]
+                return sizes_and_prices
+    return {}
 
-def get_drink_hot_available(menu_data: dict, drink_name: str) -> bool:
+def get_drink_data(menu_data: dict, drink_name: str) -> bool:
     # 遍歷所有分類
     for category in menu_data.values():
         # 在每個分類中尋找指定飲料
         for drink in category:
             if drink["name"] == drink_name:
-                return drink["options"]["hot_available"]
+                return drink["options"]
     return False
 
 # 讀取菜單
@@ -34,36 +48,22 @@ def set_shop():
 
 # 飲料選單
 class DrinkDropdown(discord.ui.Select):
-    def __init__(self, drink_list):
-        try:
-            if not drink_list:
-                options = [discord.SelectOption(label="無可用飲料")]
-            else:
-                options = [
-                    discord.SelectOption(label=drink, value=drink)
-                    for drink in drink_list
-                ]
-            super().__init__(
-                placeholder="選擇飲料", min_values=1, max_values=1, options=options
-            )
-        except Exception as e:
-            print(f"DrinkDropdown 初始化錯誤: {e}")
-            super().__init__(
-                placeholder="選單載入失敗", options=[discord.SelectOption(label="錯誤")]
-            )
+    def __init__(self, drink_list, cog):
+        self.cog = cog
+        options = [discord.SelectOption(label=drink) for drink in drink_list]
+        super().__init__(
+            placeholder="選擇飲料", min_values=1, max_values=1, options=options
+        )
 
     async def callback(self, interaction: discord.Interaction):
         try:
-            # 獲取 Cog 實例
-            cog = interaction.client.get_cog("Slash")
-
             # 獲取當前店家的冰塊和甜度選項
-            ice_options = cog.shops[cog.shop_name]["ice_level"]
-            sugar_options = cog.shops[cog.shop_name]["sugar_level"]
-            hot_available = get_drink_hot_available(cog.shop_menu, self.values[0])
-            sizes_and_prices = cog.get_drink_sizes_and_prices(cog.shop_name, self.values[0])
+            ice_options = self.cog.shops[self.cog.shop_name]["ice_level"]
+            sugar_options = self.cog.shops[self.cog.shop_name]["sugar_level"]
+            drink_data = get_drink_data(self.cog.shop_menu, self.values[0])
+            size_and_price = get_drink_sizes_and_prices(self.cog.shop_name, self.values[0])
 
-            cog.user_data[interaction.user.id] = {
+            self.cog.user_data[interaction.user.id] = {
                 "drink_name": self.values[0],
                 "ice": None,
                 "sugar": None,
@@ -71,9 +71,25 @@ class DrinkDropdown(discord.ui.Select):
                 "price": None
             }
 
-            # 創建自訂視窗
-            custom_view = CustomView(cog, ice_options, sugar_options, hot_available, sizes_and_prices)
+            if drink_data["custom_ice"] is False:
+                self.cog.user_data[interaction.user.id]['ice'] = "不可調"
+            if drink_data["custom_sugar"] is False:
+                self.cog.user_data[interaction.user.id]['sugar'] = "不可調"
+            if size_and_price and len(size_and_price) == 1:
+                size = list(size_and_price.keys())[0]
+                price = list(size_and_price.values())[0]
+                self.cog.user_data[interaction.user.id]['size'] = size
+                self.cog.user_data[interaction.user.id]['price'] = price
 
+            # 創建自訂視窗，確保傳遞所有必要參數
+            custom_view = CustomView(
+                ice_options, 
+                sugar_options, 
+                drink_data,
+                size_and_price,
+                self.cog
+            )
+            
             # 發送選項
             await interaction.response.send_message(
                 f"你選擇了: {self.values[0]}\n請選擇甜度和冰塊：",
@@ -120,35 +136,60 @@ class SugarDropdown(discord.ui.Select):
 
 class SizeDropdown(discord.ui.Select):
     def __init__(self, sizes_and_prices, cog):
-        self.cog = cog  # Store cog as an instance variable
-        self.data = sizes_and_prices
-        options = [
-            discord.SelectOption(label=size, description=f"Price: {price}")
-            for size, price in sizes_and_prices.items()
-        ]
-        super().__init__(placeholder="Choose a size...", min_values=1, max_values=1, options=options)
+        self.cog = cog
+        self.data = sizes_and_prices if sizes_and_prices else {}  # 防止None
+        options = []
+        
+        try:
+            options = [
+                discord.SelectOption(label=size, description=f"Price: {price}")
+                for size, price in self.data.items()
+            ]
+        except Exception as e:
+            print(f"建立size選項時發生錯誤: {e}")
+            options = [discord.SelectOption(label="錯誤", description="無法載入選項")]
+            
+        super().__init__(
+            placeholder="選擇大小",
+            min_values=1,
+            max_values=1,
+            options=options or [discord.SelectOption(label="預設", description="Price: 0")]  # 防止空選項
+        )
 
     async def callback(self, interaction: discord.Interaction):
-        selected_size = self.values[0]
-        self.cog.user_data[interaction.user.id]['size'] = selected_size
-        self.cog.user_data[interaction.user.id]['price'] = self.data[self.values[0]]
-        await interaction.response.send_message(f"You selected {selected_size},{self.cog.user_data}", ephemeral=True)
+        try:
+            selected_size = self.values[0]
+            if selected_size == "錯誤" or selected_size == "預設":
+                await interaction.response.send_message("選項載入錯誤，請重試", ephemeral=True)
+                return
+                
+            self.cog.user_data[interaction.user.id]['size'] = selected_size
+            self.cog.user_data[interaction.user.id]['price'] = self.data[selected_size]
+            await interaction.response.send_message(
+                f"你選擇了 {selected_size}, 價格: {self.data[selected_size]}", 
+                ephemeral=True
+            )
+        except Exception as e:
+            print(f"Size callback錯誤: {e}")
+            await interaction.response.send_message("處理選擇時發生錯誤", ephemeral=True)
 
 class DropdownView(discord.ui.View):
-    def __init__(self, drink_list):
+    def __init__(self, drink_list, cog):
         super().__init__()
-        self.add_item(DrinkDropdown(drink_list))
+        self.add_item(DrinkDropdown(drink_list, cog))
 
 
 class CustomView(discord.ui.View):
-    def __init__(self, cog, ice_level, sugar_level, hot_available, sizes_and_prices):
+    def __init__(self, ice_level, sugar_level, drink_data, sizes_and_prices, cog):
         super().__init__()
         self.cog = cog
-        if ice_level:
-            self.add_item(IceDropdown(ice_level, hot_available, cog))
-        if sugar_level:
+        
+        # 只在需要時添加選項
+        if ice_level and drink_data.get("custom_ice", True):
+            self.add_item(IceDropdown(ice_level, drink_data.get("hot_available", False), cog))
+        if sugar_level and drink_data.get("custom_sugar", True):
             self.add_item(SugarDropdown(sugar_level, cog))
-        if sizes_and_prices:
+        if sizes_and_prices and len(sizes_and_prices) > 1:
             self.add_item(SizeDropdown(sizes_and_prices, cog))
 
 
@@ -162,35 +203,6 @@ class Slash(commands.Cog):
         self.shop_names = list(self.shops.keys())
         self.user_data = {}
 
-    def get_drink_sizes(self, shop_name, drink_name):
-        menu_data = set_menu(shop_name)
-        for category in menu_data.values():
-            for drink in category:
-                if drink["name"] == drink_name:
-                    sizes = []
-                    if drink["medium_price"] is not None:
-                        sizes.append("medium")
-                    if drink["large_price"] is not None:
-                        sizes.append("large")
-                    if drink["bottle_price"] is not None:
-                        sizes.append("bottle")
-                    return sizes
-        return
-
-    def get_drink_sizes_and_prices(self, shop_name, drink_name):
-        menu_data = set_menu(shop_name)
-        for category in menu_data.values():
-            for drink in category:
-                if drink["name"] == drink_name:
-                    sizes_and_prices = {}
-                    if drink["medium_price"] is not None:
-                        sizes_and_prices["medium"] = drink["medium_price"]
-                    if drink["large_price"] is not None:
-                        sizes_and_prices["large"] = drink["large_price"]
-                    if drink["bottle_price"] is not None:
-                        sizes_and_prices["bottle"] = drink["bottle_price"]
-                    return sizes_and_prices
-        return {}
 
     @app_commands.command(name="菜單", description="給出今天的菜單")
     async def menu(self, interaction: discord.Interaction):
@@ -240,7 +252,7 @@ class Slash(commands.Cog):
         if 分類 in self.shop_menu:
             drink_names = [drink["name"] for drink in self.shop_menu[分類]]
             await interaction.followup.send(
-                "請選擇你要的飲料:", view=DropdownView(drink_names)
+                "請選擇你要的飲料:", view=DropdownView(drink_names, self)
             )
         else:
             await interaction.followup.send("該分類不存在，請重新選擇。")
