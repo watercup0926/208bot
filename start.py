@@ -10,9 +10,10 @@ from dotenv import load_dotenv
 load_dotenv()
 token = os.getenv("DISCORD_BOT_TOKEN")
 admin = os.getenv("ADMIN_ROLE_NAME")
+premix = os.getenv("PREMIX")
 channel_id = int(os.getenv("CHANNEL_ID"))
 intents = discord.Intents.all()
-bot = commands.Bot(command_prefix="!", intents=intents)
+bot = commands.Bot(command_prefix=premix, intents=intents)
 
 
 # 機器人啟動完成
