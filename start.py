@@ -3,6 +3,7 @@ import os
 import sys
 
 import discord
+import git
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -65,6 +66,18 @@ async def restart(ctx):
 async def shutdown(ctx):
     await ctx.send("Shutting down the bot...")
     await bot.close()
+
+
+@bot.command()
+@commands.has_role(admin)
+async def gitpull(ctx):
+    try:
+        repo = git.Repo(os.getcwd())
+        origin = repo.remotes.origin
+        origin.pull()
+        await ctx.send("Git pull completed successfully.")
+    except Exception as e:
+        await ctx.send(f"An error occurred: {e}")
 
 
 # 開機時載入所有子程式
