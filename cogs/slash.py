@@ -203,7 +203,6 @@ class Slash(commands.Cog):
         self.shop_names = list(self.shops.keys())
         self.user_data = {}
 
-
     @app_commands.command(name="菜單", description="給出今天的菜單")
     async def menu(self, interaction: discord.Interaction):
         if self.shop_name:
@@ -213,6 +212,26 @@ class Slash(commands.Cog):
             await interaction.response.send_message(embed=embed, ephemeral=True)
         else:
             await interaction.response.send_message("還沒決定哪間", ephemeral=True)
+
+    @app_commands.command(name="顯示點單", description="顯示大家點的東西")
+    async def show_user_data(self, interaction: discord.Interaction):
+        print(self.user_data)
+        if self.user_data:
+            for user_id, user_data in self.user_data.items():
+                member = interaction.guild.get_member(user_id)
+                if member:
+                    await interaction.response.send_message(
+                        f"姓名: {member.mention}\n"
+                        f"飲料: {user_data['drink_name']}\n"
+                        f"冰塊: {user_data['ice']}\n"
+                        f"甜度: {user_data['sugar']}\n"
+                        f"大小: {user_data['size']}\n"
+                        f"價格: {user_data['price']}\n", ephemeral=True
+                    )
+                else:
+                    await interaction.response.send_message(f"無法找到用戶 ID: {user_id}", ephemeral=True)
+        else:
+            await interaction.response.send_message("目前沒有用戶資料")
 
     @app_commands.command(name="今日店家", description="今天要喝哪家呢?")
     @app_commands.describe(店家="選擇今天的店家")
@@ -246,16 +265,16 @@ class Slash(commands.Cog):
             return
 
         # Defer the interaction response to allow more time to process
-        await interaction.response.defer()
+        await interaction.response.defer(ephemeral=True)
 
         # Check if the selected category exists and fetch the drinks
         if 分類 in self.shop_menu:
             drink_names = [drink["name"] for drink in self.shop_menu[分類]]
             await interaction.followup.send(
-                "請選擇你要的飲料:", view=DropdownView(drink_names, self)
+                "請選擇你要的飲料:", view=DropdownView(drink_names, self), ephemeral=True
             )
         else:
-            await interaction.followup.send("該分類不存在，請重新選擇。")
+            await interaction.followup.send("該分類不存在，請重新選擇。", ephemeral=True)
 
     # Autocomplete function for dynamic category choices in `order`
     @order.autocomplete("分類")

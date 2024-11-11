@@ -263,7 +263,7 @@
             "large_price": 55,
             "bottle_price": 80,
             "options": {
-                "custom_sugar": true,
+                "custom_sugar": false,
                 "custom_ice": true,
                 "hot_available": false
             }
