@@ -8,19 +8,19 @@ from discord.ext import commands
 ice_level = []
 sugar_level = []
 
-def get_drink_sizes_and_prices(shop_name, drink_name):
-    menu_data = set_menu(shop_name)
+def get_drink_sizes_and_prices(menu_data: dict, drink_name):
     for category in menu_data.values():
             for drink in category:
                 if drink["name"] == drink_name:
                     sizes_and_prices = {}
-                if drink["medium_price"] is not None:
-                    sizes_and_prices["medium"] = drink["medium_price"]
-                if drink["large_price"] is not None:
-                    sizes_and_prices["large"] = drink["large_price"]
-                if drink["bottle_price"] is not None:
-                    sizes_and_prices["bottle"] = drink["bottle_price"]
-                return sizes_and_prices
+                    if drink["medium_price"] is not None:
+                        sizes_and_prices["medium"] = drink["medium_price"]
+                    if drink["large_price"] is not None:
+                        sizes_and_prices["large"] = drink["large_price"]
+                    if drink["bottle_price"] is not None:
+                        sizes_and_prices["bottle"] = drink["bottle_price"]
+                    return sizes_and_prices
+    print("can't find a data")
     return {}
 
 def get_drink_data(menu_data: dict, drink_name: str) -> bool:
@@ -61,7 +61,7 @@ class DrinkDropdown(discord.ui.Select):
             ice_options = self.cog.shops[self.cog.shop_name]["ice_level"]
             sugar_options = self.cog.shops[self.cog.shop_name]["sugar_level"]
             drink_data = get_drink_data(self.cog.shop_menu, self.values[0])
-            size_and_price = get_drink_sizes_and_prices(self.cog.shop_name, self.values[0])
+            size_and_price = get_drink_sizes_and_prices(self.cog.shop_menu, self.values[0])
 
             self.cog.user_data[interaction.user.id] = {
                 "drink_name": self.values[0],
@@ -97,7 +97,7 @@ class DrinkDropdown(discord.ui.Select):
                 ephemeral=True,
             )
         except Exception as e:
-            print(f"Callback 錯誤: {e}")
+            print(f"Drink callback 錯誤: {e}")
             await interaction.response.send_message("選擇處理發生錯誤", ephemeral=True)
 
 
@@ -135,7 +135,7 @@ class SugarDropdown(discord.ui.Select):
 
 
 class SizeDropdown(discord.ui.Select):
-    def __init__(self, sizes_and_prices, cog):
+    def __init__(self, sizes_and_prices: dict, cog):
         self.cog = cog
         self.data = sizes_and_prices if sizes_and_prices else {}  # 防止None
         options = []
@@ -183,14 +183,14 @@ class CustomView(discord.ui.View):
     def __init__(self, ice_level, sugar_level, drink_data, sizes_and_prices, cog):
         super().__init__()
         self.cog = cog
-        
+        sizes = sizes_and_prices
         # 只在需要時添加選項
-        if ice_level and drink_data.get("custom_ice", True):
+        if drink_data.get("custom_ice", True):
             self.add_item(IceDropdown(ice_level, drink_data.get("hot_available", False), cog))
-        if sugar_level and drink_data.get("custom_sugar", True):
+        if drink_data.get("custom_sugar", True):
             self.add_item(SugarDropdown(sugar_level, cog))
-        if sizes_and_prices and len(sizes_and_prices) > 1:
-            self.add_item(SizeDropdown(sizes_and_prices, cog))
+        if len(sizes) > 1:
+            self.add_item(SizeDropdown(sizes, cog))
 
 
 class Slash(commands.Cog):
