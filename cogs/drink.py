@@ -77,6 +77,7 @@ class DrinkDropdown(discord.ui.Select):
                 "sugar": None,
                 "size": None,
                 "price": None,
+                "addon": [],
             }
 
             if drink_data["custom_ice"] is False:
@@ -218,8 +219,11 @@ class AddonButton(discord.ui.Button):
         super().__init__(label=f"+{price}{addon}", style=discord.ButtonStyle.primary)
         self.addon = addon
         self.cog = cog
+        self.price = price
 
     async def callback(self, interaction: discord.Interaction):
+        self.cog.user_data[interaction.user.id]["addon"].append(self.addon)
+        self.cog.user_data[interaction.user.id]["price"] += self.price
         await interaction.response.send_message(f'你加了 {self.addon}', ephemeral=True)
 
 
@@ -257,7 +261,8 @@ class Drink_order(commands.Cog):
                         f"冰塊: {user_data['ice']}\n"
                         f"甜度: {user_data['sugar']}\n"
                         f"大小: {user_data['size']}\n"
-                        f"價格: {user_data['price']}\n",
+                        f"價格: {user_data['price']}\n"
+                        f"加料: {user_data['addon']}",
                         ephemeral=True,
                     )
                 else:
