@@ -8,7 +8,6 @@ from discord.ext import commands
 ice_level = []
 sugar_level = []
 
-
 def get_drink_sizes_and_prices(menu_data: dict, drink_name):
     for category in menu_data.values():
         for drink in category:
@@ -47,7 +46,11 @@ def set_shop():
     with open("shops.json", "r", encoding="UTF-8") as f:
         data = json.load(f)
     return data
-
+def get_drink_addons(menu_data: dict) -> dict:
+    addons = {}
+    for i in range(0,21,5):
+        addons[f"add_{i}"] = menu_data[f"add_{i}"]
+    return addons
 
 # 飲料選單
 class DrinkDropdown(discord.ui.Select):
@@ -202,12 +205,29 @@ class CustomView(discord.ui.View):
             self.add_item(SugarDropdown(sugar_level, cog))
         if len(sizes) > 1:
             self.add_item(SizeDropdown(sizes, cog))
+        for i in range(0, 21, 5):
+            if self.cog.addons[f"add_{i}"] is not None:
+                for addon in self.cog.addons[f"add_{i}"]:
+                    self.add_item(AddonButton(addon, i, self.cog))
+                    print(addon)
+
+        self.timeout = 120  # 設置視窗超時時間
+
+class AddonButton(discord.ui.Button):
+    def __init__(self, addon, price, cog):
+        super().__init__(label=f"+{price}{addon}", style=discord.ButtonStyle.primary)
+        self.addon = addon
+        self.cog = cog
+
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.send_message(f'你加了 {self.addon}', ephemeral=True)
 
 
 class Drink_order(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.shop_name = ""
+        self.addons = {}
         self.shop_menu = {}
         self.categories = []
         self.shops = set_shop()
@@ -254,7 +274,8 @@ class Drink_order(commands.Cog):
         self.shop_name = 店家
         self.shop_menu = set_menu(店家)
         self.categories = list(self.shop_menu.keys())
-        print(self.categories)
+        self.addons = get_drink_addons(self.shops[店家])
+        print(店家)
         ice_level = self.shops[店家]["ice_level"]
         sugar_level = self.shops[店家]["sugar_level"]
         url = self.shops[店家]["menu_url"]
