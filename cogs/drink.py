@@ -97,9 +97,14 @@ class DrinkDropdown(discord.ui.Select):
 
             # 發送選項
             await interaction.response.send_message(
-                f"你選擇了: {self.values[0]}\n請選擇甜度和冰塊：",
+                f"你選擇了: {self.values[0]}\n請選擇：",
                 view=custom_view,
                 ephemeral=True,
+            )
+            await interaction.followup.send(
+                "請選擇加料：",
+                view=AddonView(self.cog),
+                ephemeral=True
             )
         except Exception as e:
             print(f"Drink callback 錯誤: {e}")
@@ -206,13 +211,17 @@ class CustomView(discord.ui.View):
             self.add_item(SugarDropdown(sugar_level, cog))
         if len(sizes) > 1:
             self.add_item(SizeDropdown(sizes, cog))
+        self.timeout = 120  # 設置視窗超時時間
+
+class AddonView(discord.ui.View):
+    def __init__(self, cog):
+        super().__init__()
+        self.cog = cog
         for i in range(0, 21, 5):
             if self.cog.addons[f"add_{i}"] is not None:
                 for addon in self.cog.addons[f"add_{i}"]:
                     self.add_item(AddonButton(addon, i, self.cog))
                     print(addon)
-
-        self.timeout = 120  # 設置視窗超時時間
 
 class AddonButton(discord.ui.Button):
     def __init__(self, addon, price, cog):
