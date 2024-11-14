@@ -9,7 +9,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 token = os.getenv("DISCORD_BOT_TOKEN")
-admin = os.getenv("ADMIN_ROLE_NAME")
+# 將單一角色名稱改為多個角色列表，使用逗號分隔
+admin_roles = os.getenv("ADMIN_ROLE_NAME").split(',')
 premix = os.getenv("PREMIX")
 channel_id = int(os.getenv("CHANNEL_ID"))
 intents = discord.Intents.all()
@@ -28,9 +29,16 @@ async def on_ready():
         await channel.send("Bot is up and ready!")
 
 
+# 檢查是否具有管理員角色的函數
+def is_admin():
+    async def predicate(ctx):
+        return any(role.name in admin_roles for role in ctx.author.roles)
+    return commands.check(predicate)
+
+
 # 指令：$load
 @bot.command()
-@commands.has_role(admin)
+@is_admin()
 async def load(ctx, extension):
     await bot.load_extension(f"cogs.{extension}")
     await ctx.send(f"Loaded {extension} successfully.")
@@ -38,7 +46,7 @@ async def load(ctx, extension):
 
 # 指令：$unload
 @bot.command()
-@commands.has_role(admin)
+@is_admin()
 async def unload(ctx, extension):
     await bot.unload_extension(f"cogs.{extension}")
     await ctx.send(f"Unloaded {extension} successfully.")
@@ -46,7 +54,7 @@ async def unload(ctx, extension):
 
 # 指令：$reload
 @bot.command()
-@commands.has_role(admin)
+@is_admin()
 async def reload(ctx, extension):
     await bot.reload_extension(f"cogs.{extension}")
     await ctx.send(f"Reloaded {extension} successfully.")
@@ -54,7 +62,7 @@ async def reload(ctx, extension):
 
 # 指令: restart
 @bot.command(name="restart", help="重新啟動機器人")
-@commands.has_role(admin)
+@is_admin()
 async def restart(ctx):
     await ctx.send("Restarting the bot...")
     # Restart the bot program
@@ -63,14 +71,14 @@ async def restart(ctx):
 
 # 指令: shutdown
 @bot.command(name="shutdown", help="關閉機器人")
-@commands.has_role(admin)
+@is_admin()
 async def shutdown(ctx):
     await ctx.send("Shutting down the bot...")
     await bot.close()
 
 
 @bot.command()
-@commands.has_role(admin)
+@is_admin()
 async def gitpull(ctx):
     try:
         repo = git.Repo(os.getcwd())
