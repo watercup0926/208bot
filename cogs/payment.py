@@ -35,6 +35,10 @@ class Payment(commands.Cog):
         await interaction.response.send_message(f"你剩 {data[user]} 元", ephemeral=True)
     @app_commands.command(name="全部存款", description="所有人的存款")
     async def bank(self,interaction: discord.Interaction):
+        data = read()
+        await interaction.response.send_message("大家的存款是")
+        for user in data.values():
+            await interaction.followup.send()
 				
     # Setup function to add the cog to the bot
 async def setup(bot):
