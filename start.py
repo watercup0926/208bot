@@ -84,8 +84,7 @@ async def gitpull(ctx):
         repo = git.Repo(os.getcwd())
         origin = repo.remotes.origin
         origin.pull()
-        await ctx.send("Git pull completed successfully,restarting bot...")
-        os.execv(sys.executable, ["python"] + sys.argv)
+        await ctx.send("Git pull completed successfully.")
     except Exception as e:
         await ctx.send(f"An error occurred: {e}")
 
