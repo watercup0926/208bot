@@ -261,10 +261,11 @@ class Drink_order(commands.Cog):
     async def show_user_data(self, interaction: discord.Interaction):
         print(self.user_data)
         if self.user_data:
+            await interaction.response.send_message("以下是大家的點單：", ephemeral=True)
             for user_id, user_data in self.user_data.items():
                 member = interaction.guild.get_member(user_id)
                 if member:
-                    await interaction.response.send_message(
+                    await interaction.followup.send(
                         f"姓名: {member.mention}\n"
                         f"飲料: {user_data['drink_name']}\n"
                         f"冰塊: {user_data['ice']}\n"
