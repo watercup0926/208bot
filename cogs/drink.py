@@ -1,5 +1,5 @@
 import json
-
+from start import admin_roles
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -284,6 +284,7 @@ class Drink_order(commands.Cog):
 
     @app_commands.command(name="今日店家", description="今天要喝哪家呢?")
     @app_commands.describe(店家="選擇今天的店家")
+    @app_commands.checks.has_any_role(*admin_roles)
     async def store(self, interaction: discord.Interaction, 店家: str):
         global ice_level, sugar_level
         self.shop_name = 店家
