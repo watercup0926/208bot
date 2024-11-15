@@ -299,7 +299,7 @@
             "bottle_price": null,
             "options": {
                 "custom_sugar": true,
-                "custom_ice": false,
+                "custom_ice": true,
                 "hot_available": false
             }
         },
