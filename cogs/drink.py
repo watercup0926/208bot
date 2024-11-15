@@ -52,6 +52,16 @@ def get_drink_addons(menu_data: dict) -> dict:
         addons[f"add_{i}"] = menu_data[f"add_{i}"]
     return addons
 
+def status(cogs,user_id):
+    content = f"飲料:{cogs.user_data[user_id]["drink"]}"
+    if cogs.user_data[user_id]["ice"]:
+        content += f"冰塊:{cogs.user_data[user_id]["ice"]}"
+    if cogs.user_data[user_id]["sugar"]:
+        content += f"甜度:{cogs.user_data[user_id]["sugar"]}"
+    if cogs.user_data[user_id]["addons"]:
+        content += f"加料:{cogs.user_data[user_id]["addons"]}"
+    return content
+
 # 飲料選單
 class DrinkDropdown(discord.ui.Select):
     def __init__(self, drink_list, cog):
@@ -90,22 +100,15 @@ class DrinkDropdown(discord.ui.Select):
                 self.cog.user_data[interaction.user.id]["size"] = size
                 self.cog.user_data[interaction.user.id]["price"] = price
 
-            # 創建自訂視窗，確保傳遞所有必要參數
+            # 發送初始訊息
+            content = f"你選擇了: {self.values[0]}"
+            await interaction.response.send_message(content=content)
+
             custom_view = CustomView(
                 ice_options, sugar_options, drink_data, size_and_price, self.cog
             )
-
-            # 發送選項
-            await interaction.response.send_message(
-                f"你選擇了: {self.values[0]}\n請選擇：",
-                view=custom_view,
-                ephemeral=True,
-            )
-            await interaction.followup.send(
-                "請選擇加料：",
-                view=AddonView(self.cog),
-                ephemeral=True
-            )
+            await interaction.followup.send(view=custom_view,ephemeral=True)
+            await interaction.followup.send(view=AddonView(self.cog),ephemeral=True)
         except Exception as e:
             print(f"Drink callback 錯誤: {e}")
             await interaction.response.send_message("選擇處理發生錯誤", ephemeral=True)
@@ -124,9 +127,6 @@ class IceDropdown(discord.ui.Select):
 
     async def callback(self, interaction: discord.Interaction):
         self.cog.user_data[interaction.user.id]["ice"] = self.values[0]
-        await interaction.response.send_message(
-            f"你選擇了: {self.values[0]}", ephemeral=True
-        )
 
 
 class SugarDropdown(discord.ui.Select):
@@ -139,9 +139,6 @@ class SugarDropdown(discord.ui.Select):
 
     async def callback(self, interaction: discord.Interaction):
         self.cog.user_data[interaction.user.id]["sugar"] = self.values[0]
-        await interaction.response.send_message(
-            f"你選擇了: {self.values[0]}", ephemeral=True
-        )
 
 
 class SizeDropdown(discord.ui.Select):
@@ -180,10 +177,6 @@ class SizeDropdown(discord.ui.Select):
 
             self.cog.user_data[interaction.user.id]["size"] = selected_size
             self.cog.user_data[interaction.user.id]["price"] = self.data[selected_size]
-            await interaction.response.send_message(
-                f"你選擇了 {selected_size}, 價格: {self.data[selected_size]}",
-                ephemeral=True,
-            )
         except Exception as e:
             print(f"Size callback錯誤: {e}")
             await interaction.response.send_message(
@@ -262,6 +255,7 @@ class Drink_order(commands.Cog):
         print(self.user_data)
         if self.user_data:
             await interaction.response.send_message("以下是大家的點單：", ephemeral=True)
+            total = 0
             for user_id, user_data in self.user_data.items():
                 member = interaction.guild.get_member(user_id)
                 if member:
@@ -271,14 +265,16 @@ class Drink_order(commands.Cog):
                         f"冰塊: {user_data['ice']}\n"
                         f"甜度: {user_data['sugar']}\n"
                         f"大小: {user_data['size']}\n"
-                        f"價格: {user_data['price']}\n"
+                        f"價格: {user_data['price']+5}\n"
                         f"加料: {user_data['addon']}",
                         ephemeral=True,
                     )
+                    total += user_data['price']
                 else:
                     await interaction.response.send_message(
                         f"無法找到用戶 ID: {user_id}", ephemeral=True
                     )
+            await interaction.followup(f"總價:{total}元，共{len(user_data.value())}杯")
         else:
             await interaction.response.send_message("目前沒有用戶資料")
 
