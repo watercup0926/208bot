@@ -1,12 +1,16 @@
 import json
-from start import admin_roles
+from typing import Optional
+
 import discord
 from discord import app_commands
 from discord.ext import commands
 
+from start import admin_roles
+
 # 定義全域變數
 ice_level = []
 sugar_level = []
+
 
 def get_drink_sizes_and_prices(menu_data: dict, drink_name):
     for category in menu_data.values():
@@ -46,16 +50,20 @@ def set_shop():
     with open("shops.json", "r", encoding="UTF-8") as f:
         data = json.load(f)
     return data
+
+
 def get_drink_addons(menu_data: dict) -> dict:
     addons = {}
-    for i in range(0,21,5):
+    for i in range(0, 21, 5):
         addons[f"add_{i}"] = menu_data[f"add_{i}"]
     return addons
 
+
 # 飲料選單
 class DrinkDropdown(discord.ui.Select):
-    def __init__(self, drink_list, cog):
+    def __init__(self, drink_list, user_id, cog):
         self.cog = cog
+        self.user_id = user_id
         options = [discord.SelectOption(label=drink) for drink in drink_list]
         super().__init__(
             placeholder="選擇飲料", min_values=1, max_values=1, options=options
@@ -71,7 +79,7 @@ class DrinkDropdown(discord.ui.Select):
                 self.cog.shop_menu, self.values[0]
             )
 
-            self.cog.user_data[interaction.user.id] = {
+            self.cog.user_data[self.user_id] = {
                 "drink_name": self.values[0],
                 "ice": None,
                 "sugar": None,
@@ -81,18 +89,23 @@ class DrinkDropdown(discord.ui.Select):
             }
 
             if drink_data["custom_ice"] is False:
-                self.cog.user_data[interaction.user.id]["ice"] = "不可調"
+                self.cog.user_data[self.user_id]["ice"] = "不可調"
             if drink_data["custom_sugar"] is False:
-                self.cog.user_data[interaction.user.id]["sugar"] = "不可調"
+                self.cog.user_data[self.user_id]["sugar"] = "不可調"
             if size_and_price and len(size_and_price) == 1:
                 size = list(size_and_price.keys())[0]
                 price = list(size_and_price.values())[0]
-                self.cog.user_data[interaction.user.id]["size"] = size
-                self.cog.user_data[interaction.user.id]["price"] = price
+                self.cog.user_data[self.user_id]["size"] = size
+                self.cog.user_data[self.user_id]["price"] = price
 
             # 創建自訂視窗，確保傳遞所有必要參數
             custom_view = CustomView(
-                ice_options, sugar_options, drink_data, size_and_price, self.cog
+                ice_options,
+                sugar_options,
+                drink_data,
+                size_and_price,
+                self.user_id,
+                self.cog,
             )
 
             # 發送選項
@@ -102,9 +115,7 @@ class DrinkDropdown(discord.ui.Select):
                 ephemeral=True,
             )
             await interaction.followup.send(
-                "請選擇加料：",
-                view=AddonView(self.cog),
-                ephemeral=True
+                "請選擇加料：", view=AddonView(self.user_id, self.cog), ephemeral=True
             )
         except Exception as e:
             print(f"Drink callback 錯誤: {e}")
@@ -112,8 +123,9 @@ class DrinkDropdown(discord.ui.Select):
 
 
 class IceDropdown(discord.ui.Select):
-    def __init__(self, ice_level, hot_available, cog):
+    def __init__(self, ice_level, hot_available, user_id, cog):
         self.cog = cog  # Store cog as an instance variable
+        self.user_id = user_id
         # 從ice level裡面自動上選項
         options = [discord.SelectOption(label=ice) for ice in ice_level]
         if hot_available:
@@ -123,30 +135,28 @@ class IceDropdown(discord.ui.Select):
         )
 
     async def callback(self, interaction: discord.Interaction):
-        self.cog.user_data[interaction.user.id]["ice"] = self.values[0]
-        await interaction.response.send_message(
-            f"你選擇了: {self.values[0]}", ephemeral=True
-        )
+        self.cog.user_data[self.user_id]["ice"] = self.values[0]
+        await interaction.response.defer()
 
 
 class SugarDropdown(discord.ui.Select):
-    def __init__(self, sugar_level, cog):
+    def __init__(self, sugar_level, user_id, cog):
         self.cog = cog  # Store cog as an instance variable
+        self.user_id = user_id
         options = [discord.SelectOption(label=sugar) for sugar in sugar_level]
         super().__init__(
             placeholder="甜度", min_values=1, max_values=1, options=options
         )
 
     async def callback(self, interaction: discord.Interaction):
-        self.cog.user_data[interaction.user.id]["sugar"] = self.values[0]
-        await interaction.response.send_message(
-            f"你選擇了: {self.values[0]}", ephemeral=True
-        )
+        self.cog.user_data[self.user_id]["sugar"] = self.values[0]
+        await interaction.response.defer()
 
 
 class SizeDropdown(discord.ui.Select):
-    def __init__(self, sizes_and_prices: dict, cog):
+    def __init__(self, sizes_and_prices: dict, user_id, cog):
         self.cog = cog
+        self.user_id = user_id
         self.data = sizes_and_prices if sizes_and_prices else {}  # 防止None
         options = []
 
@@ -178,12 +188,9 @@ class SizeDropdown(discord.ui.Select):
                 )
                 return
 
-            self.cog.user_data[interaction.user.id]["size"] = selected_size
-            self.cog.user_data[interaction.user.id]["price"] = self.data[selected_size]
-            await interaction.response.send_message(
-                f"你選擇了 {selected_size}, 價格: {self.data[selected_size]}",
-                ephemeral=True,
-            )
+            self.cog.user_data[self.user_id]["size"] = selected_size
+            self.cog.user_data[self.user_id]["price"] = self.data[selected_size]
+            await interaction.response.defer()
         except Exception as e:
             print(f"Size callback錯誤: {e}")
             await interaction.response.send_message(
@@ -192,48 +199,55 @@ class SizeDropdown(discord.ui.Select):
 
 
 class DropdownView(discord.ui.View):
-    def __init__(self, drink_list, cog):
+    def __init__(self, drink_list, user_id, cog):
         super().__init__()
-        self.add_item(DrinkDropdown(drink_list, cog))
+        self.add_item(DrinkDropdown(drink_list, user_id, cog))
 
 
 class CustomView(discord.ui.View):
-    def __init__(self, ice_level, sugar_level, drink_data, sizes_and_prices, cog):
+    def __init__(
+        self, ice_level, sugar_level, drink_data, sizes_and_prices, user_id, cog
+    ):
         super().__init__()
         self.cog = cog
         sizes = sizes_and_prices
         # 只在需要時添加選項
         if drink_data.get("custom_ice", True):
             self.add_item(
-                IceDropdown(ice_level, drink_data.get("hot_available", False), cog)
+                IceDropdown(
+                    ice_level, drink_data.get("hot_available", False), user_id, cog
+                )
             )
         if drink_data.get("custom_sugar", True):
-            self.add_item(SugarDropdown(sugar_level, cog))
+            self.add_item(SugarDropdown(sugar_level, user_id, cog))
         if len(sizes) > 1:
-            self.add_item(SizeDropdown(sizes, cog))
+            self.add_item(SizeDropdown(sizes, user_id, cog))
         self.timeout = 120  # 設置視窗超時時間
 
+
 class AddonView(discord.ui.View):
-    def __init__(self, cog):
+    def __init__(self, user_id, cog):
         super().__init__()
         self.cog = cog
         for i in range(0, 21, 5):
             if self.cog.addons[f"add_{i}"] is not None:
                 for addon in self.cog.addons[f"add_{i}"]:
-                    self.add_item(AddonButton(addon, i, self.cog))
+                    self.add_item(AddonButton(addon, i, user_id, self.cog))
                     print(addon)
 
+
 class AddonButton(discord.ui.Button):
-    def __init__(self, addon, price, cog):
+    def __init__(self, addon, price, user_id, cog):
         super().__init__(label=f"+{price}{addon}", style=discord.ButtonStyle.primary)
         self.addon = addon
         self.cog = cog
         self.price = price
+        self.user_id = user_id
 
     async def callback(self, interaction: discord.Interaction):
-        self.cog.user_data[interaction.user.id]["addon"].append(self.addon)
-        self.cog.user_data[interaction.user.id]["price"] += self.price
-        await interaction.response.send_message(f'你加了 {self.addon}', ephemeral=True)
+        self.cog.user_data[self.user_id]["addon"].append(self.addon)
+        self.cog.user_data[self.user_id]["price"] += self.price
+        await interaction.response.send_message(f"你加了 {self.addon}", ephemeral=True)
 
 
 class Drink_order(commands.Cog):
@@ -260,8 +274,11 @@ class Drink_order(commands.Cog):
     @app_commands.command(name="顯示點單", description="顯示大家點的東西")
     async def show_user_data(self, interaction: discord.Interaction):
         print(self.user_data)
+        total_price = 0
         if self.user_data:
-            await interaction.response.send_message("以下是大家的點單：", ephemeral=True)
+            await interaction.response.send_message(
+                "以下是大家的點單：", ephemeral=True
+            )
             for user_id, user_data in self.user_data.items():
                 member = interaction.guild.get_member(user_id)
                 if member:
@@ -275,10 +292,14 @@ class Drink_order(commands.Cog):
                         f"加料: {user_data['addon']}",
                         ephemeral=True,
                     )
+                    total_price += user_data["price"]
                 else:
-                    await interaction.response.send_message(
+                    await interaction.followup.send(
                         f"無法找到用戶 ID: {user_id}", ephemeral=True
                     )
+                await interaction.followup.send(
+                    f"總價: {total_price},共{len(self.user_data)}杯", ephemeral=True
+                )
         else:
             await interaction.response.send_message("目前沒有用戶資料")
 
@@ -310,20 +331,23 @@ class Drink_order(commands.Cog):
 
     @app_commands.command(name="點餐", description="想喝什麼")
     @app_commands.describe(分類="選擇飲料分類")
-    async def order(self, interaction: discord.Interaction, 分類: str):
+    async def order(
+        self, interaction: discord.Interaction, 分類: str, 名字: Optional[int] = None
+    ):
         if not self.shop_name:
             await interaction.response.send_message("尚未選擇店家。", ephemeral=True)
             return
 
         # Defer the interaction response to allow more time to process
         await interaction.response.defer(ephemeral=True)
-
+        if not 名字:
+            user_id = interaction.user.id
         # Check if the selected category exists and fetch the drinks
         if 分類 in self.shop_menu:
             drink_names = [drink["name"] for drink in self.shop_menu[分類]]
             await interaction.followup.send(
                 "請選擇你要的飲料:",
-                view=DropdownView(drink_names, self),
+                view=DropdownView(drink_names, user_id, self),
                 ephemeral=True,
             )
         else:
