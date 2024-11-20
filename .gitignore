@@ -2,3 +2,5 @@
 .env
 /cogs/__pycache__
 /.vs
+/.vscode
+/__pycache__
