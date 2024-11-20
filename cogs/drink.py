@@ -292,14 +292,19 @@ class Drink_order(commands.Cog):
                         f"加料: {user_data['addon']}",
                         ephemeral=True,
                     )
-                    total_price += user_data["price"]
                 else:
                     await interaction.followup.send(
-                        f"無法找到用戶 ID: {user_id}", ephemeral=True
+                        f"姓名: {user_id}\n"
+                        f"飲料: {user_data['drink_name']}\n"
+                        f"冰塊: {user_data['ice']}\n"
+                        f"甜度: {user_data['sugar']}\n"
+                        f"大小: {user_data['size']}\n"
+                        f"價格: {user_data['price']}\n"
+                        f"加料: {user_data['addon']}",
+                        ephemeral=True,
                     )
-                await interaction.followup.send(
-                    f"總價: {total_price},共{len(self.user_data)}杯", ephemeral=True
-                )
+                total_price += user_data["price"]
+            await interaction.followup.send(f"總價: {total_price},共{len(self.user_data)}杯", ephemeral=True)
         else:
             await interaction.response.send_message("目前沒有用戶資料")
 
@@ -332,7 +337,7 @@ class Drink_order(commands.Cog):
     @app_commands.command(name="點餐", description="想喝什麼")
     @app_commands.describe(分類="選擇飲料分類")
     async def order(
-        self, interaction: discord.Interaction, 分類: str, 名字: Optional[int] = None
+        self, interaction: discord.Interaction, 分類: str, 名字: Optional[str] = None
     ):
         if not self.shop_name:
             await interaction.response.send_message("尚未選擇店家。", ephemeral=True)
@@ -342,7 +347,9 @@ class Drink_order(commands.Cog):
         await interaction.response.defer(ephemeral=True)
         if not 名字:
             user_id = interaction.user.id
-        # Check if the selected category exists and fetch the drinks
+        else:
+            user_id = 名字
+            # Check if the selected category exists and fetch the drinks
         if 分類 in self.shop_menu:
             drink_names = [drink["name"] for drink in self.shop_menu[分類]]
             await interaction.followup.send(
