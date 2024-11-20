@@ -288,7 +288,7 @@ class Drink_order(commands.Cog):
                         f"冰塊: {user_data['ice']}\n"
                         f"甜度: {user_data['sugar']}\n"
                         f"大小: {user_data['size']}\n"
-                        f"價格: {user_data['price']}\n"
+                        f"價格: {user_data['price']+5}\n"
                         f"加料: {user_data['addon']}",
                         ephemeral=True,
                     )
@@ -299,7 +299,7 @@ class Drink_order(commands.Cog):
                         f"冰塊: {user_data['ice']}\n"
                         f"甜度: {user_data['sugar']}\n"
                         f"大小: {user_data['size']}\n"
-                        f"價格: {user_data['price']}\n"
+                        f"價格: {user_data['price']+5}\n"
                         f"加料: {user_data['addon']}",
                         ephemeral=True,
                     )
