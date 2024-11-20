@@ -304,7 +304,9 @@ class Drink_order(commands.Cog):
                         ephemeral=True,
                     )
                 total_price += user_data["price"]
-            await interaction.followup.send(f"總價: {total_price},共{len(self.user_data)}杯", ephemeral=True)
+            await interaction.followup.send(
+                f"總價: {total_price},共{len(self.user_data)}杯", ephemeral=True
+            )
         else:
             await interaction.response.send_message("目前沒有用戶資料")
 
