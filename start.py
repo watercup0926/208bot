@@ -9,7 +9,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 token = os.getenv("DISCORD_BOT_TOKEN")
-admin = os.getenv("ADMIN_ROLE_NAME")
+# admin = os.getenv("ADMIN_ROLE_NAME")
+admin = "杯子"
 premix = os.getenv("PREMIX")
 channel_id = int(os.getenv("CHANNEL_ID"))
 intents = discord.Intents.all()
@@ -33,6 +34,7 @@ async def on_ready():
 @commands.has_role(admin)
 async def load(ctx, extension):
     await bot.load_extension(f"cogs.{extension}")
+    await bot.tree.sync()
     await ctx.send(f"Loaded {extension} successfully.")
 
 
@@ -41,6 +43,7 @@ async def load(ctx, extension):
 @commands.has_role(admin)
 async def unload(ctx, extension):
     await bot.unload_extension(f"cogs.{extension}")
+    await bot.tree.sync()
     await ctx.send(f"Unloaded {extension} successfully.")
 
 
@@ -49,6 +52,7 @@ async def unload(ctx, extension):
 @commands.has_role(admin)
 async def reload(ctx, extension):
     await bot.reload_extension(f"cogs.{extension}")
+    await bot.tree.sync()
     await ctx.send(f"Reloaded {extension} successfully.")
 
 
