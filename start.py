@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 token = os.getenv("DISCORD_BOT_TOKEN")
 # 將單一角色名稱改為多個角色列表，使用逗號分隔
-admin_roles = os.getenv("ADMIN_ROLE_NAME").split(',')
+admin_roles = os.getenv("ADMIN_ROLE_NAME").split(",")
 premix = os.getenv("PREMIX")
 channel_id = int(os.getenv("CHANNEL_ID"))
 intents = discord.Intents.all()
@@ -26,13 +26,14 @@ async def on_ready():
     print("Slash commands have been synced.")
     channel = bot.get_channel(channel_id)
     if channel:
-        await channel.send("Bot is up and ready!")
+        await channel.send("有事嗎？")
 
 
 # 檢查是否具有管理員角色的函數
 def is_admin():
     async def predicate(ctx):
         return any(role.name in admin_roles for role in ctx.author.roles)
+
     return commands.check(predicate)
 
 
@@ -41,7 +42,7 @@ def is_admin():
 @is_admin()
 async def load(ctx, extension):
     await bot.load_extension(f"cogs.{extension}")
-    await ctx.send(f"Loaded {extension} successfully.")
+    await ctx.send(f"好好好...吵死了!人家這不就載好{extension}了嗎?")
 
 
 # 指令：$unload
@@ -49,7 +50,7 @@ async def load(ctx, extension):
 @is_admin()
 async def unload(ctx, extension):
     await bot.unload_extension(f"cogs.{extension}")
-    await ctx.send(f"Unloaded {extension} successfully.")
+    await ctx.send(f"PS.蛤?{extension}不見了...是不是我做錯事了?")
 
 
 # 指令：$reload
@@ -57,14 +58,14 @@ async def unload(ctx, extension):
 @is_admin()
 async def reload(ctx, extension):
     await bot.reload_extension(f"cogs.{extension}")
-    await ctx.send(f"Reloaded {extension} successfully.")
+    await ctx.send(f"你到底想要怎樣啦?又把{extension}弄回來!煩不煩拉!")
 
 
 # 指令: restart
 @bot.command(name="restart", help="重新啟動機器人")
 @is_admin()
 async def restart(ctx):
-    await ctx.send("Restarting the bot...")
+    await ctx.send("阿我有東西忘記拿了!我回去一下!")
     # Restart the bot program
     os.execv(sys.executable, ["python"] + sys.argv)
 
@@ -73,7 +74,7 @@ async def restart(ctx):
 @bot.command(name="shutdown", help="關閉機器人")
 @is_admin()
 async def shutdown(ctx):
-    await ctx.send("Shutting down the bot...")
+    await ctx.send("等等…人家還不想…離開…")
     await bot.close()
 
 
@@ -84,9 +85,10 @@ async def gitpull(ctx):
         repo = git.Repo(os.getcwd())
         origin = repo.remotes.origin
         origin.pull()
-        await ctx.send("Git pull completed successfully.")
+        await ctx.send("我換了套衣服...合適嗎>///< ")
     except Exception as e:
-        await ctx.send(f"An error occurred: {e}")
+        await ctx.send("人家…壞掉了…")
+        print(e)
 
 
 # 開機時載入所有子程式
