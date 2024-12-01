@@ -18,11 +18,11 @@ def get_drink_sizes_and_prices(menu_data: dict, drink_name):
             if drink["name"] == drink_name:
                 sizes_and_prices = {}
                 if drink["medium_price"] is not None:
-                    sizes_and_prices["中杯"] = drink["medium_price"]
+                    sizes_and_prices["medium"] = drink["medium_price"]
                 if drink["large_price"] is not None:
-                    sizes_and_prices["大杯"] = drink["large_price"]
+                    sizes_and_prices["large"] = drink["large_price"]
                 if drink["bottle_price"] is not None:
-                    sizes_and_prices["瓶裝"] = drink["bottle_price"]
+                    sizes_and_prices["bottle"] = drink["bottle_price"]
                 return sizes_and_prices
     print("can't find a data")
     return {}
@@ -110,20 +110,16 @@ class DrinkDropdown(discord.ui.Select):
 
             # 發送選項
             await interaction.response.send_message(
-                "所以呢？死蟲子要喝什麼？",
+                f"你選擇了: {self.values[0]}\n請選擇：",
                 view=custom_view,
                 ephemeral=True,
             )
             await interaction.followup.send(
-                "蛤？還要加料？麻煩死了…",
-                view=AddonView(self.user_id, self.cog),
-                ephemeral=True,
+                "請選擇加料：", view=AddonView(self.user_id, self.cog), ephemeral=True
             )
         except Exception as e:
             print(f"Drink callback 錯誤: {e}")
-            await interaction.response.send_message(
-                "你在說什麼人家聽不懂啦！", ephemeral=True
-            )
+            await interaction.response.send_message("選擇處理發生錯誤", ephemeral=True)
 
 
 class IceDropdown(discord.ui.Select):
@@ -251,9 +247,7 @@ class AddonButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         self.cog.user_data[self.user_id]["addon"].append(self.addon)
         self.cog.user_data[self.user_id]["price"] += self.price
-        await interaction.response.send_message(
-            f"はいはい...{self.addon}是吧？哼…", ephemeral=True
-        )
+        await interaction.response.send_message(f"你加了 {self.addon}", ephemeral=True)
 
 
 class Drink_order(commands.Cog):
@@ -275,9 +269,7 @@ class Drink_order(commands.Cog):
             embed.set_image(url=url)
             await interaction.response.send_message(embed=embed, ephemeral=True)
         else:
-            await interaction.response.send_message(
-                "吵死了！你根本還沒說你要哪間啊？", ephemeral=True
-            )
+            await interaction.response.send_message("還沒決定哪間", ephemeral=True)
 
     @app_commands.command(name="顯示點單", description="顯示大家點的東西")
     async def show_user_data(self, interaction: discord.Interaction):
@@ -285,39 +277,38 @@ class Drink_order(commands.Cog):
         total_price = 0
         if self.user_data:
             await interaction.response.send_message(
-                "點單…在這裡…自己看吧懶惰鬼！", ephemeral=True
+                "以下是大家的點單：", ephemeral=True
             )
             for user_id, user_data in self.user_data.items():
                 member = interaction.guild.get_member(user_id)
                 if member:
                     await interaction.followup.send(
-                        f"我看看...是個叫{member.mention}的白癡點的\n"
-                        f"居然要喝{user_data['drink_name']}\n"
-                        f"還要{user_data['ice']}真麻煩....\n"
-                        f"{user_data['sugar']}? 再吃糖會得糖尿病辣!\n"
-                        f"哼...點什麼 {user_data['size']}阿?\n"
-                        f"價格居然是 {user_data['price']+5}???都不怕錢花光嗎可憐蟲?\n"
-                        f"還加了{user_data['addon']}切...居然跟我喜歡的一樣.....O///O,",
+                        f"姓名: {member.mention}\n"
+                        f"飲料: {user_data['drink_name']}\n"
+                        f"冰塊: {user_data['ice']}\n"
+                        f"甜度: {user_data['sugar']}\n"
+                        f"大小: {user_data['size']}\n"
+                        f"價格: {user_data['price']+5}\n"
+                        f"加料: {user_data['addon']}",
                         ephemeral=True,
                     )
                 else:
                     await interaction.followup.send(
-                        f"我看看...是個叫{user_id}的白癡點的\n"
-                        f"居然要喝{user_data['drink_name']}\n"
-                        f"還要{user_data['ice']}真麻煩....\n"
-                        f"{user_data['sugar']}? 再吃糖會得糖尿病辣!\n"
-                        f"哼...點什麼 {user_data['size']}阿?\n"
-                        f"價格居然是 {user_data['price']+5}???都不怕錢花光嗎可憐蟲?\n"
-                        f"還加了{user_data['addon']}切...居然跟我喜歡的一樣.....O///O,",
+                        f"姓名: {user_id}\n"
+                        f"飲料: {user_data['drink_name']}\n"
+                        f"冰塊: {user_data['ice']}\n"
+                        f"甜度: {user_data['sugar']}\n"
+                        f"大小: {user_data['size']}\n"
+                        f"價格: {user_data['price']+5}\n"
+                        f"加料: {user_data['addon']}",
                         ephemeral=True,
                     )
                 total_price += user_data["price"]
             await interaction.followup.send(
-                f"總共{total_price},有{len(self.user_data)}杯，自己付…我可不出錢喔！？",
-                ephemeral=True,
+                f"總價: {total_price},共{len(self.user_data)}杯", ephemeral=True
             )
         else:
-            await interaction.response.send_message("你…誰啊？快點走開！哼…")
+            await interaction.response.send_message("目前沒有用戶資料")
 
     @app_commands.command(name="今日店家", description="今天要喝哪家呢?")
     @app_commands.describe(店家="選擇今天的店家")
@@ -332,7 +323,7 @@ class Drink_order(commands.Cog):
         ice_level = self.shops[店家]["ice_level"]
         sugar_level = self.shops[店家]["sugar_level"]
         url = self.shops[店家]["menu_url"]
-        embed = discord.Embed(title=f"又是{店家}…你就那麼愛喝嗎？")
+        embed = discord.Embed(title=f"各位，今天喝{店家}喔")
         embed.set_image(url=url)
         await interaction.response.send_message(embed=embed)
 
@@ -351,7 +342,7 @@ class Drink_order(commands.Cog):
         self, interaction: discord.Interaction, 分類: str, 名字: Optional[str] = None
     ):
         if not self.shop_name:
-            await interaction.response.send_message("要喝哪一家…快點…", ephemeral=True)
+            await interaction.response.send_message("尚未選擇店家。", ephemeral=True)
             return
 
         # Defer the interaction response to allow more time to process
@@ -364,12 +355,14 @@ class Drink_order(commands.Cog):
         if 分類 in self.shop_menu:
             drink_names = [drink["name"] for drink in self.shop_menu[分類]]
             await interaction.followup.send(
-                "你要喝什麼？我正要去買所以就…順便幫你一下…",
+                "請選擇你要的飲料:",
                 view=DropdownView(drink_names, user_id, self),
                 ephemeral=True,
             )
         else:
-            await interaction.followup.send("才沒有那種東西呢！バカ… ", ephemeral=True)
+            await interaction.followup.send(
+                "該分類不存在，請重新選擇。", ephemeral=True
+            )
 
     # Autocomplete function for dynamic category choices in `order`
     @order.autocomplete("分類")
