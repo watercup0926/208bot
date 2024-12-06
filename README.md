@@ -4,3 +4,5 @@ random store
 deadlime
 purchase system
 拖延中
+
+**Do you want to eat vegetables?**
