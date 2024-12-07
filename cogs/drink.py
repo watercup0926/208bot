@@ -7,6 +7,8 @@ from discord.ext import commands
 # 定義全域變數
 ice_level = []
 sugar_level = []
+share_user_data = {}
+
 
 def get_drink_sizes_and_prices(menu_data: dict, drink_name):
     for category in menu_data.values():
@@ -46,11 +48,14 @@ def set_shop():
     with open("shops.json", "r", encoding="UTF-8") as f:
         data = json.load(f)
     return data
+
+
 def get_drink_addons(menu_data: dict) -> dict:
     addons = {}
-    for i in range(0,21,5):
+    for i in range(0, 21, 5):
         addons[f"add_{i}"] = menu_data[f"add_{i}"]
     return addons
+
 
 # 飲料選單
 class DrinkDropdown(discord.ui.Select):
@@ -214,6 +219,7 @@ class CustomView(discord.ui.View):
 
         self.timeout = 120  # 設置視窗超時時間
 
+
 class AddonButton(discord.ui.Button):
     def __init__(self, addon, price, cog):
         super().__init__(label=f"+{price}{addon}", style=discord.ButtonStyle.primary)
@@ -224,7 +230,7 @@ class AddonButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         self.cog.user_data[interaction.user.id]["addon"].append(self.addon)
         self.cog.user_data[interaction.user.id]["price"] += self.price
-        await interaction.response.send_message(f'你加了 {self.addon}', ephemeral=True)
+        await interaction.response.send_message(f"你加了 {self.addon}", ephemeral=True)
 
 
 class Drink_order(commands.Cog):
@@ -244,13 +250,14 @@ class Drink_order(commands.Cog):
             url = self.shops[self.shop_name]["menu_url"]
             embed = discord.Embed(title=f"{self.shop_name} 的菜單")
             embed.set_image(url=url)
+            global share_user_data
+            share_user_data = self.user_data
             await interaction.response.send_message(embed=embed, ephemeral=True)
         else:
             await interaction.response.send_message("還沒決定哪間", ephemeral=True)
 
     @app_commands.command(name="顯示點單", description="顯示大家點的東西")
     async def show_user_data(self, interaction: discord.Interaction):
-        print(self.user_data)
         if self.user_data:
             for user_id, user_data in self.user_data.items():
                 member = interaction.guild.get_member(user_id)
