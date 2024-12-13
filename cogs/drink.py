@@ -282,27 +282,33 @@ class Drink_order(commands.Cog):
             for user_id, user_data in self.user_data.items():
                 member = interaction.guild.get_member(user_id)
                 if member:
-                    await interaction.followup.send(
-                        f"姓名: {member.mention}\n"
-                        f"飲料: {user_data['drink_name']}\n"
-                        f"冰塊: {user_data['ice']}\n"
-                        f"甜度: {user_data['sugar']}\n"
-                        f"大小: {user_data['size']}\n"
-                        f"價格: {user_data['price']+5}\n"
-                        f"加料: {user_data['addon']}",
-                        ephemeral=True,
-                    )
+                    try:
+                        await interaction.followup.send(
+                            f"姓名: {member.mention}\n"
+                            f"飲料: {user_data['drink_name']}\n"
+                            f"冰塊: {user_data['ice']}\n"
+                            f"甜度: {user_data['sugar']}\n"
+                            f"大小: {user_data['size']}\n"
+                            f"價格: {user_data['price']+5}\n"
+                            f"加料: {user_data['addon']}",
+                            ephemeral=True,
+                        )
+                    except Exception as e:
+                        await interaction.followup.send(e)
                 else:
-                    await interaction.followup.send(
-                        f"姓名: {user_id}\n"
-                        f"飲料: {user_data['drink_name']}\n"
-                        f"冰塊: {user_data['ice']}\n"
-                        f"甜度: {user_data['sugar']}\n"
-                        f"大小: {user_data['size']}\n"
-                        f"價格: {user_data['price']+5}\n"
-                        f"加料: {user_data['addon']}",
-                        ephemeral=True,
-                    )
+                    try:
+                        await interaction.followup.send(
+                            f"姓名: {user_id}\n"
+                            f"飲料: {user_data['drink_name']}\n"
+                            f"冰塊: {user_data['ice']}\n"
+                            f"甜度: {user_data['sugar']}\n"
+                            f"大小: {user_data['size']}\n"
+                            f"價格: {user_data['price']+5}\n"
+                            f"加料: {user_data['addon']}",
+                            ephemeral=True,
+                        )
+                    except Exception as e:
+                        await interaction.followup.send(e)
                 total_price += user_data["price"]
             await interaction.followup.send(
                 f"總價: {total_price},共{len(self.user_data)}杯", ephemeral=True
